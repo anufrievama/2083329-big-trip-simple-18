@@ -1,6 +1,6 @@
 import { createElement } from '../render.js';
 
-const createWayPointListTemplate = () => ('<ul class="trip-events__list"></ul>');
+const createWayPointListTemplate = () => '<ul class="trip-events__list"></ul>';
 
 export default class WayPointListView {
   getTemplate() {
@@ -12,10 +12,6 @@ export default class WayPointListView {
       this.element = createElement(this.getTemplate());
     }
     return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
 
