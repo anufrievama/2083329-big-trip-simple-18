@@ -27,9 +27,5 @@ export default class FilterView {
     }
     return this.element;
   }
-
-  removeElement() {
-    this.element = null;
-  }
 }
 

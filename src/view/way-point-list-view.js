@@ -13,10 +13,6 @@ export default class WayPointListView {
     }
     return this.element;
   }
-
-  removeElement() {
-    this.element = null;
-  }
 }
 
 
