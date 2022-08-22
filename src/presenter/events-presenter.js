@@ -23,14 +23,19 @@ export default class EventsPresenter {
       this.#wayPointsModel.getDestination(this.#wayPoints[0]),
       this.#wayPointsModel.allDestinations),
     this.#wayPointListComponent.element);
-    render(new CreationFormView(this.#wayPointsModel.allOffers, this.#wayPointsModel.allDestinations),this.#wayPointListComponent.element);
+    render(new CreationFormView(this.#wayPointsModel.allOffers, this.#wayPointsModel.allDestinations), this.#wayPointListComponent.element);
 
     for (let i = 0; i < this.#wayPoints.length; i++) {
-      render(new WayPointView(
-        this.#wayPoints[i],
-        this.#wayPointsModel.getOffers(this.#wayPoints[i]),
-        this.#wayPointsModel.getDestination(this.#wayPoints[i])
-      ), this.#wayPointListComponent.element);
+      this.#renderWayPont(this.#wayPoints[i]);
     }
+  };
+
+  #renderWayPont = (wayPoint) => {
+    const wayPointComponent = new WayPointView(
+      wayPoint,
+      this.#wayPointsModel.getOffers(wayPoint),
+      this.#wayPointsModel.getDestination(wayPoint)
+    );
+    render(wayPointComponent, this.#wayPointListComponent.element);
   };
 }
