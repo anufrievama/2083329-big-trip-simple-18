@@ -25,6 +25,8 @@ const getLastWord = (string) => {
   return wordArray[wordArray.length - 1];
 };
 
+const isEscapeKey = (key) => key === 'Escape';
+
 export {
   getRandomArrayElement,
   getRandomInteger,
@@ -34,5 +36,6 @@ export {
   formatISOStringToDate,
   formatISOStringToDateTime,
   formatISOStringToDateTimeWithSlash,
-  getLastWord
+  getLastWord,
+  isEscapeKey
 };
