@@ -1,14 +1,13 @@
 import { DESTINATION_NAMES, DESTINATION_DESCRIPTIONS, CountPictures, URL_IMAGE } from './const.js';
 import { getRandomInteger, getRandomArrayElement } from '../utils.js';
 
-const generatePicture = () => (
-  {
-    src: `${URL_IMAGE}${getRandomInteger()}`,
-    description: getRandomArrayElement(DESTINATION_DESCRIPTIONS),
-  }
-);
-
-const generatePictures = () => Array.from({ length: getRandomInteger(CountPictures.MIN, CountPictures.MAX) }, generatePicture);
+const generatePictures = () => Array.from({ length: getRandomInteger(CountPictures.MIN, CountPictures.MAX) },
+  (_value, index) => (
+    {
+      src: `${URL_IMAGE}${index}`,
+      description: getRandomArrayElement(DESTINATION_DESCRIPTIONS),
+    }
+  ));
 
 const generateDestination = (id) => (
   {

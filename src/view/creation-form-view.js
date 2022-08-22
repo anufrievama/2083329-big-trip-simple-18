@@ -101,19 +101,24 @@ const createCreationFormTemplate = (allOffers, allDestinations) => {
 };
 
 export default class CreationFormView {
+
+  #element = null;
+  #alloffers = null;
+  #allDestinations = null;
+
   constructor(alloffers, allDestinations) {
-    this.alloffers = alloffers;
-    this.allDestinations = allDestinations;
+    this.#alloffers = alloffers;
+    this.#allDestinations = allDestinations;
   }
 
   getTemplate() {
-    return createCreationFormTemplate(this.alloffers, this.allDestinations);
+    return createCreationFormTemplate(this.#alloffers, this.#allDestinations);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.getTemplate());
     }
-    return this.element;
+    return this.#element;
   }
 }

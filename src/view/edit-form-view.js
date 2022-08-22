@@ -115,6 +115,9 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers }, o
 };
 
 export default class EditFormView {
+
+  #element = null;
+
   constructor(wayPoint, offersByType, destination, allDestinations) {
     this.wayPoint = wayPoint;
     this.offersByType = offersByType;
@@ -126,11 +129,11 @@ export default class EditFormView {
     return createEditFormTemplate(this.wayPoint, this.offersByType, this.destination, this.allDestinations);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.getTemplate());
     }
-    return this.element;
+    return this.#element;
   }
 }
 
