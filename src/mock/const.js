@@ -1,4 +1,4 @@
-const COUNT_WAY_POINTS = 25;
+const COUNT_WAY_POINTS = 10;
 const URL_IMAGE = 'http://picsum.photos/248/152?r=';
 const UNIT_DATE = 'minute';
 const Price = {

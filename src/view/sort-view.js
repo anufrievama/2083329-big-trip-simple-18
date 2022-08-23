@@ -43,3 +43,4 @@ export default class SortView {
     return this.#element;
   }
 }
+

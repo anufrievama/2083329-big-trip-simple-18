@@ -1,6 +1,8 @@
-import WayPointListView from '../view/way-point-list-view.js';
-import WayPointView from '../view/way-point-view.js';
+import WayPointListView from '../view/waypoint-list-view.js';
+import WayPointView from '../view/waypoint-view.js';
 import EditFormView from '../view/edit-form-view.js';
+import EmptyListView from '../view/empty-list-view.js';
+import SortView from '../view/sort-view.js';
 import { isEscapeKey } from '../utils.js';
 import { render } from '../render.js';
 
@@ -11,20 +13,17 @@ export default class EventsPresenter {
   #wayPoints = [];
   #wayPointListComponent = new WayPointListView();
 
-  init = (eventsContainer, wayPointsModel) => {
-
+  constructor(eventsContainer, wayPointsModel) {
     this.#eventsContainer = eventsContainer;
     this.#wayPointsModel = wayPointsModel;
+  }
+
+  init = () => {
     this.#wayPoints = this.#wayPointsModel.wayPoints;
-
-    render(this.#wayPointListComponent, this.#eventsContainer);
-
-    for (let i = 0; i < this.#wayPoints.length; i++) {
-      this.#renderWayPont(this.#wayPoints[i]);
-    }
+    this.#renderWayPointsList();
   };
 
-  #renderWayPont = (wayPoint) => {
+  #renderWayPoint = (wayPoint) => {
     const wayPointComponent = new WayPointView(
       wayPoint,
       this.#wayPointsModel.getOffers(wayPoint),
@@ -35,7 +34,6 @@ export default class EventsPresenter {
       this.#wayPointsModel.getOffersByType(wayPoint),
       this.#wayPointsModel.getDestination(wayPoint),
       this.#wayPointsModel.allDestinations);
-
 
     const replacePointToForm = () => this.#wayPointListComponent.element.replaceChild(wayPointEditComponent.element, wayPointComponent.element);
 
@@ -67,4 +65,18 @@ export default class EventsPresenter {
 
     render(wayPointComponent, this.#wayPointListComponent.element);
   };
+
+  #renderWayPointsList = () => {
+    if (this.#wayPoints.length === 0) {
+      render(new EmptyListView(), this.#eventsContainer);
+    } else {
+      render(new SortView(), this.#eventsContainer);
+      render(this.#wayPointListComponent, this.#eventsContainer);
+      for (let i = 0; i < this.#wayPoints.length; i++) {
+        this.#renderWayPoint(this.#wayPoints[i]);
+      }
+    }
+  };
+
+
 }

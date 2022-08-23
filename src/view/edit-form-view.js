@@ -2,7 +2,7 @@ import { createElement } from '../render.js';
 import { WAY_POINT_TYPES } from '../mock/const.js';
 import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord } from '../utils.js';
 
-const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers }, offersByTypes, { name, description, pictures }, allDestinations) => {
+const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, offersIds,{ name, description, pictures }, allDestinations) => {
   const eventDateStart = formatISOStringToDateTimeWithSlash(dateFrom);
   const eventDateEnd = formatISOStringToDateTimeWithSlash(dateTo);
 
@@ -19,20 +19,22 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers }, o
     `<option value="${destination.name}"></option>`
   )).join(''));
 
-  const createOfferTemplate = () => (offersByTypes.map(({ id, title, price }) => {
+
+  const createOfferTemplate = () => (offers.map(({ id, title, price }) => {
     const nameOffer = getLastWord(title);
     const idOffer = `${nameOffer}-${id}`;
-    const checked = offers.includes(id) ? 'checked' : '';
+    const checked = offersIds.includes(id) ? 'checked' : '';
     return `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${idOffer}" type="checkbox" name="event-offer-${nameOffer}" ${checked}>
-          <label class="event__offer-label" for="event-${idOffer}">
-            <span class="event__offer-title">${title}</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">${price}</span>
-          </label>
-      </div>`;
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${idOffer}" type="checkbox" name="event-offer-${nameOffer}" ${checked}>
+            <label class="event__offer-label" for="event-${idOffer}">
+              <span class="event__offer-title">${title}</span>
+              &plus;&euro;&nbsp;
+              <span class="event__offer-price">${price}</span>
+            </label>
+        </div>`;
   }
   ).join(''));
+
 
   const createPicturesTemplate = () => pictures === null ? '' : (pictures.map((picture) => (
     `<img class="event__photo" src="${picture.src}" alt="Event photo">`
@@ -118,15 +120,16 @@ export default class EditFormView {
 
   #element = null;
 
-  constructor(wayPoint, offersByType, destination, allDestinations) {
+  constructor(wayPoint, offers, destination, allDestinations) {
     this.wayPoint = wayPoint;
-    this.offersByType = offersByType;
+    this.offers = offers;
+    this.offersIds = wayPoint.offers;
     this.destination = destination;
     this.allDestinations = allDestinations;
   }
 
   getTemplate() {
-    return createEditFormTemplate(this.wayPoint, this.offersByType, this.destination, this.allDestinations);
+    return createEditFormTemplate(this.wayPoint, this.offers, this.offersIds, this.destination, this.allDestinations);
   }
 
   get element() {
