@@ -3,8 +3,8 @@ import { WAY_POINT_TYPES, DEFAULT_WAY_POINT } from '../mock/const.js';
 import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord } from '../utils.js';
 
 const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, offersIds, { name, description, pictures }, allDestinations) => {
-  const eventDateStart = dateFrom !== null ? formatISOStringToDateTimeWithSlash(dateFrom) : '';
-  const eventDateEnd = dateTo !== null ? formatISOStringToDateTimeWithSlash(dateTo) : '';
+  const eventDateStart = formatISOStringToDateTimeWithSlash(dateFrom);
+  const eventDateEnd = formatISOStringToDateTimeWithSlash(dateTo);
 
   const createEventTypeListTemplate = () => (WAY_POINT_TYPES.map((wayPointType) => {
     const checked = type === wayPointType ? 'checked' : '';

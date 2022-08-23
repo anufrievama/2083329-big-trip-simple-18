@@ -4,7 +4,7 @@ import EditFormView from '../view/edit-form-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import SortView from '../view/sort-view.js';
 import { isEscapeKey } from '../utils.js';
-import { render } from '../framework/render.js';
+import { render, replace } from '../framework/render.js';
 
 export default class EventsPresenter {
 
@@ -35,9 +35,9 @@ export default class EventsPresenter {
       this.#wayPointsModel.getDestination(wayPoint),
       this.#wayPointsModel.allDestinations);
 
-    const replacePointToForm = () => this.#wayPointListComponent.element.replaceChild(wayPointEditComponent.element, wayPointComponent.element);
+    const replacePointToForm = () => replace(wayPointEditComponent, wayPointComponent);
 
-    const replaceFormToPoint = () => this.#wayPointListComponent.element.replaceChild(wayPointComponent.element, wayPointEditComponent.element);
+    const replaceFormToPoint = () => replace(wayPointComponent, wayPointEditComponent);
 
     const onEscKeyDown = (evt) => {
       if (isEscapeKey(evt.key)) {
