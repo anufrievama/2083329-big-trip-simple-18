@@ -57,7 +57,7 @@ export default class EventsPresenter {
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    wayPointEditComponent.element.querySelector('.event__save-btn').addEventListener('click', (evt) => {
+    wayPointEditComponent.element.querySelector('.event--edit').addEventListener('submit', (evt) => {
       evt.preventDefault();
       replaceFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
