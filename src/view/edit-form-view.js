@@ -130,5 +130,25 @@ export default class EditFormView extends AbstractView {
   get template() {
     return createEditFormTemplate(this.wayPoint, this.offers, this.offersIds, this.destination, this.allDestinations);
   }
+
+  setRollupClickHandler = (callback) => {
+    this._callback.rollupClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+  };
+
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.rollupClick();
+  };
+
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+  };
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  };
 }
 

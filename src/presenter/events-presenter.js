@@ -47,18 +47,17 @@ export default class EventsPresenter {
       }
     };
 
-    wayPointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    wayPointComponent.setRollupClickHandler(() => {
       replacePointToForm();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    wayPointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    wayPointEditComponent.setRollupClickHandler(() => {
       replaceFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    wayPointEditComponent.element.querySelector('.event--edit').addEventListener('submit', (evt) => {
-      evt.preventDefault();
+    wayPointEditComponent.setFormSubmitHandler(() => {
       replaceFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });
