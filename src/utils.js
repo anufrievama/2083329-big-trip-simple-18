@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-const getRandomInteger = (min = 0, max = 1000) => {
+const getRandomInteger = (min = 1, max = 1000) => {
   const minNumber = Math.min(Math.abs(min), Math.abs(max));
   const maxNumber = Math.max(Math.abs(min), Math.abs(max));
   return Math.floor(minNumber + Math.random() * (maxNumber - minNumber + 1));
