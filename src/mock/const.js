@@ -1,16 +1,6 @@
 const COUNT_WAY_POINTS = 10;
 const URL_IMAGE = 'http://picsum.photos/248/152?r=';
 const UNIT_DATE = 'minute';
-const Price = {
-  MIN: 10,
-  MAX: 1000,
-};
-
-const CountPictures = {
-  MIN: 1,
-  MAX: 5,
-};
-
 const WAY_POINT_TYPES = [
   'taxi',
   'bus',
@@ -22,6 +12,26 @@ const WAY_POINT_TYPES = [
   'sightseeing',
   'restaurant',
 ];
+
+const DEFAULT_WAY_POINT = {
+  id: 0,
+  basePrice: 0,
+  dateFrom: null,
+  dateTo: null,
+  destination: '',
+  offers: [],
+  type: WAY_POINT_TYPES[0],
+};
+
+const Price = {
+  MIN: 10,
+  MAX: 1000,
+};
+
+const CountPictures = {
+  MIN: 1,
+  MAX: 5,
+};
 
 const OFFER_TITLES = [
   'add luggage',
@@ -56,6 +66,7 @@ export {
   COUNT_WAY_POINTS,
   URL_IMAGE, UNIT_DATE,
   WAY_POINT_TYPES,
+  DEFAULT_WAY_POINT,
   OFFER_TITLES,
   DESTINATION_NAMES,
   DESTINATION_DESCRIPTIONS,

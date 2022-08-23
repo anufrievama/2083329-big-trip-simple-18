@@ -1,10 +1,10 @@
-import { createElement } from '../render.js';
-import { WAY_POINT_TYPES } from '../mock/const.js';
+import AbstractView from '../framework/view/abstract-view';
+import { WAY_POINT_TYPES, DEFAULT_WAY_POINT } from '../mock/const.js';
 import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord } from '../utils.js';
 
-const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, offersIds,{ name, description, pictures }, allDestinations) => {
-  const eventDateStart = formatISOStringToDateTimeWithSlash(dateFrom);
-  const eventDateEnd = formatISOStringToDateTimeWithSlash(dateTo);
+const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, offersIds, { name, description, pictures }, allDestinations) => {
+  const eventDateStart = dateFrom !== null ? formatISOStringToDateTimeWithSlash(dateFrom) : '';
+  const eventDateEnd = dateTo !== null ? formatISOStringToDateTimeWithSlash(dateTo) : '';
 
   const createEventTypeListTemplate = () => (WAY_POINT_TYPES.map((wayPointType) => {
     const checked = type === wayPointType ? 'checked' : '';
@@ -36,7 +36,7 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, o
   ).join(''));
 
 
-  const createPicturesTemplate = () => pictures === null ? '' : (pictures.map((picture) => (
+  const createPicturesTemplate = () => pictures === undefined ? '' : (pictures.map((picture) => (
     `<img class="event__photo" src="${picture.src}" alt="Event photo">`
   )).join(''));
 
@@ -116,11 +116,10 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, o
 </li>`);
 };
 
-export default class EditFormView {
+export default class EditFormView extends AbstractView {
 
-  #element = null;
-
-  constructor(wayPoint, offers, destination, allDestinations) {
+  constructor(wayPoint = DEFAULT_WAY_POINT, offers, destination, allDestinations) {
+    super();
     this.wayPoint = wayPoint;
     this.offers = offers;
     this.offersIds = wayPoint.offers;
@@ -128,15 +127,8 @@ export default class EditFormView {
     this.allDestinations = allDestinations;
   }
 
-  getTemplate() {
+  get template() {
     return createEditFormTemplate(this.wayPoint, this.offers, this.offersIds, this.destination, this.allDestinations);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.getTemplate());
-    }
-    return this.#element;
   }
 }
 

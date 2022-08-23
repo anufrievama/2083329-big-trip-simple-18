@@ -4,7 +4,7 @@ import EditFormView from '../view/edit-form-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import SortView from '../view/sort-view.js';
 import { isEscapeKey } from '../utils.js';
-import { render } from '../render.js';
+import { render } from '../framework/render.js';
 
 export default class EventsPresenter {
 

@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view';
 import { WAY_POINT_TYPES } from '../mock/const.js';
 import { toUpperCaseFirstLetter, getLastWord } from '../utils.js';
 
@@ -100,25 +100,19 @@ const createCreationFormTemplate = (allOffers, allDestinations) => {
 </li>`;
 };
 
-export default class CreationFormView {
+export default class CreationFormView extends AbstractView {
 
-  #element = null;
   #alloffers = null;
   #allDestinations = null;
 
   constructor(alloffers, allDestinations) {
+    super();
     this.#alloffers = alloffers;
     this.#allDestinations = allDestinations;
   }
 
-  getTemplate() {
+  get template() {
     return createCreationFormTemplate(this.#alloffers, this.#allDestinations);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.getTemplate());
-    }
-    return this.#element;
-  }
 }
