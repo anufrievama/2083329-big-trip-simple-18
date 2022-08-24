@@ -4,7 +4,7 @@ import EditFormView from '../view/edit-form-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import SortView from '../view/sort-view.js';
 import { isEscapeKey } from '../utils.js';
-import { render } from '../render.js';
+import { render, replace } from '../framework/render.js';
 
 export default class EventsPresenter {
 
@@ -35,9 +35,9 @@ export default class EventsPresenter {
       this.#wayPointsModel.getDestination(wayPoint),
       this.#wayPointsModel.allDestinations);
 
-    const replacePointToForm = () => this.#wayPointListComponent.element.replaceChild(wayPointEditComponent.element, wayPointComponent.element);
+    const replacePointToForm = () => replace(wayPointEditComponent, wayPointComponent);
 
-    const replaceFormToPoint = () => this.#wayPointListComponent.element.replaceChild(wayPointComponent.element, wayPointEditComponent.element);
+    const replaceFormToPoint = () => replace(wayPointComponent, wayPointEditComponent);
 
     const onEscKeyDown = (evt) => {
       if (isEscapeKey(evt.key)) {
@@ -47,18 +47,17 @@ export default class EventsPresenter {
       }
     };
 
-    wayPointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    wayPointComponent.setRollupClickHandler(() => {
       replacePointToForm();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    wayPointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    wayPointEditComponent.setRollupClickHandler(() => {
       replaceFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    wayPointEditComponent.element.querySelector('.event__save-btn').addEventListener('click', (evt) => {
-      evt.preventDefault();
+    wayPointEditComponent.setFormSubmitHandler(() => {
       replaceFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });

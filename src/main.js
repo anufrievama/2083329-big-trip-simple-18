@@ -1,7 +1,7 @@
 import FilterView from './view/filter-view.js';
 import EventsPresenter from './presenter/events-presenter.js';
 import WayPointsModel from './model/waypoints-model.js';
-import { render } from './render.js';
+import { render } from './framework/render.js';
 
 const controlsFiltersElement = document.querySelector('.trip-controls__filters');
 const eventsContainerElement = document.querySelector('.trip-events');

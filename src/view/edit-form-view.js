@@ -1,8 +1,9 @@
-import { createElement } from '../render.js';
-import { WAY_POINT_TYPES } from '../mock/const.js';
+import AbstractView from '../framework/view/abstract-view';
+import { WAY_POINT_TYPES, DEFAULT_WAY_POINT } from '../mock/const.js';
 import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord } from '../utils.js';
 
-const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, offersIds,{ name, description, pictures }, allDestinations) => {
+const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, offersIds, destination, allDestinations) => {
+
   const eventDateStart = formatISOStringToDateTimeWithSlash(dateFrom);
   const eventDateEnd = formatISOStringToDateTimeWithSlash(dateTo);
 
@@ -15,8 +16,8 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, o
   }
   ).join(''));
 
-  const createDestinationOptionsTemplate = () => (allDestinations.map((destination) => (
-    `<option value="${destination.name}"></option>`
+  const createDestinationOptionsTemplate = () => (allDestinations.map((destinationItem) => (
+    `<option value="${destinationItem.name}"></option>`
   )).join(''));
 
 
@@ -36,9 +37,27 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, o
   ).join(''));
 
 
-  const createPicturesTemplate = () => pictures === null ? '' : (pictures.map((picture) => (
+  const createPhotosTemplate = (pictures) => (pictures.map((picture) => (
     `<img class="event__photo" src="${picture.src}" alt="Event photo">`
   )).join(''));
+
+  const createPhotosContainerTemplate = () =>
+    'pictures' in destination
+      ? `<div class="event__photos-container">
+      <div class="event__photos-tape">
+       ${createPhotosTemplate(destination.pictures)}
+      </div>
+    </div>`
+      : '';
+
+  const createDestinationsContainerTemplate = () =>
+    destination !== null ?
+      `<section class="event__section  event__section--destination">
+          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+          <p class="event__destination-description">${destination.description}</p>
+          ${createPhotosContainerTemplate()}
+        </section>`
+      : '';
 
   return (
     `<li class="trip-events__item">
@@ -63,7 +82,7 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, o
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
           <datalist id="destination-list-1">
           ${createDestinationOptionsTemplate()}
           </datalist>
@@ -99,28 +118,16 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, o
             ${createOfferTemplate()}
           </div>
         </section>
-
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${description}</p>
-
-          <div class="event__photos-container">
-            <div class="event__photos-tape">
-              ${createPicturesTemplate()}
-            </div>
-          </div>
-
-        </section>
+        ${createDestinationsContainerTemplate()}
       </section>
     </form>
 </li>`);
 };
 
-export default class EditFormView {
+export default class EditFormView extends AbstractView {
 
-  #element = null;
-
-  constructor(wayPoint, offers, destination, allDestinations) {
+  constructor(wayPoint = DEFAULT_WAY_POINT, offers = [], destination = null, allDestinations = []) {
+    super();
     this.wayPoint = wayPoint;
     this.offers = offers;
     this.offersIds = wayPoint.offers;
@@ -128,15 +135,28 @@ export default class EditFormView {
     this.allDestinations = allDestinations;
   }
 
-  getTemplate() {
+  get template() {
     return createEditFormTemplate(this.wayPoint, this.offers, this.offersIds, this.destination, this.allDestinations);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.getTemplate());
-    }
-    return this.#element;
-  }
+  setRollupClickHandler = (callback) => {
+    this._callback.rollupClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
+  };
+
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.rollupClick();
+  };
+
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+  };
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  };
 }
 

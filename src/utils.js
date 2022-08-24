@@ -10,15 +10,15 @@ const toUpperCaseFirstLetter = (string) => string[0].toUpperCase() + string.slic
 
 const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
 
-const formatISOStringToMonthDay = (date) => dayjs(date).format('MMM D');
+const formatISOStringToMonthDay = (date) => date === null ? '' : dayjs(date).format('MMM D');
 
-const formatISOStringToTime = (date) => dayjs(date).format('HH:mm');
+const formatISOStringToTime = (date) => date === null ? '' : dayjs(date).format('HH:mm');
 
-const formatISOStringToDate = (date) => dayjs(date).format('YYYY-MM-DD');
+const formatISOStringToDate = (date) => date === null ? '' : dayjs(date).format('YYYY-MM-DD');
 
-const formatISOStringToDateTime = (date) => dayjs(date).format('YYYY-MM-DDTHH:mm');
+const formatISOStringToDateTime = (date) => date === null ? '' : dayjs(date).format('YYYY-MM-DDTHH:mm');
 
-const formatISOStringToDateTimeWithSlash = (date) => dayjs(date).format('DD/MM/YY HH:mm');
+const formatISOStringToDateTimeWithSlash = (date) => date === null ? '' : dayjs(date).format('DD/MM/YY HH:mm');
 
 const getLastWord = (string) => {
   const wordArray = string.split(' ');

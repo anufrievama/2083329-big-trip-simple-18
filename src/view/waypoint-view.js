@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view';
 import { formatISOStringToMonthDay, formatISOStringToTime, formatISOStringToDate, formatISOStringToDateTime } from '../utils.js';
 
 const createWayPointTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, { name }) => {
@@ -54,26 +54,30 @@ const createWayPointTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, {
 </li>`);
 };
 
-export default class WayPointView {
-  #element = null;
+export default class WayPointView extends AbstractView {
+
   #wayPoint = null;
   #offers = null;
   #destination = null;
 
   constructor(wayPoint, offers, destination) {
+    super();
     this.#wayPoint = wayPoint;
     this.#offers = offers;
     this.#destination = destination;
   }
 
-  getTemplate() {
+  get template() {
     return createWayPointTemplate(this.#wayPoint, this.#offers, this.#destination);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.getTemplate());
-    }
-    return this.#element;
-  }
+  setRollupClickHandler = (callback) => {
+    this._callback.rollupClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click',this.#rollupClickHandler);
+  };
+
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.rollupClick();
+  };
 }
