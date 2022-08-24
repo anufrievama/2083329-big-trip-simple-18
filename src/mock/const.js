@@ -18,7 +18,7 @@ const DEFAULT_WAY_POINT = {
   basePrice: 0,
   dateFrom: null,
   dateTo: null,
-  destination: '',
+  destination: null,
   offers: [],
   type: WAY_POINT_TYPES[0],
 };
