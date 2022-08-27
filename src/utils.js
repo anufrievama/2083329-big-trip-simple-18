@@ -1,4 +1,13 @@
 import dayjs from 'dayjs';
+import { UNIT_DATE } from './mock/const.js';
+import { FilterType } from './mock/const.js';
+
+const isFutureDate = (dateStart, dateEnd) => dayjs().isBefore(dayjs(dateStart), UNIT_DATE) || dayjs().isBefore(dayjs(dateEnd), UNIT_DATE);
+
+const filter = {
+  [FilterType.EVERYTHING]: (wayPoints) => wayPoints,
+  [FilterType.FUTURE]: (wayPoints) => wayPoints.filter((wayPoint) => isFutureDate(wayPoint.dateTo, wayPoint.dateFrom)),
+};
 
 const getRandomInteger = (min = 1, max = 1000) => {
   const minNumber = Math.min(Math.abs(min), Math.abs(max));
@@ -37,5 +46,6 @@ export {
   formatISOStringToDateTime,
   formatISOStringToDateTimeWithSlash,
   getLastWord,
-  isEscapeKey
+  isEscapeKey,
+  filter,
 };
