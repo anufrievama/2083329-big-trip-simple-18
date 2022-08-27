@@ -62,6 +62,13 @@ sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismo
 sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum
 ac purus sit amet tempus.`.split('. ');
 
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future'
+};
+
+const SortTypes = ['day','event','time', 'price','offers'];
+
 export {
   COUNT_WAY_POINTS,
   URL_IMAGE, UNIT_DATE,
@@ -72,4 +79,6 @@ export {
   DESTINATION_DESCRIPTIONS,
   Price,
   CountPictures,
+  FilterType,
+  SortTypes
 };
