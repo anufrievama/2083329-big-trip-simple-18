@@ -1,7 +1,7 @@
 import WayPointView from '../view/waypoint-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import { isEscapeKey } from '../utils.js';
-import { render, replace } from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 
 export default class WayPointPresenter {
 
@@ -18,6 +18,8 @@ export default class WayPointPresenter {
 
   init = (wayPoint) => {
     this.#wayPoint = wayPoint;
+    const prevWayPointComponent = this.#wayPointComponent;
+    const prevWayPointEditComponent = this.#wayPointEditComponent;
 
     this.#wayPointComponent = new WayPointView(wayPoint,
       this.#wayPointsModel.getOffers(wayPoint),
@@ -32,7 +34,26 @@ export default class WayPointPresenter {
     this.#wayPointEditComponent.setRollupClickHandler(this.#handleRollupClick);
     this.#wayPointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
 
-    render(this.#wayPointComponent, this.#wayPointListComponent.element);
+    if (prevWayPointComponent === null || prevWayPointEditComponent === null) {
+      render(this.#wayPointComponent, this.#wayPointListComponent.element);
+      return;
+    }
+
+    if (this.#wayPointListComponent.contains(prevWayPointComponent.element)) {
+      replace(this.#wayPointComponent, prevWayPointComponent);
+    }
+
+    if (this.#wayPointListComponent.contains(prevWayPointEditComponent.element)) {
+      replace(this.#wayPointEditComponent, prevWayPointEditComponent);
+    }
+
+    remove(prevWayPointComponent);
+    remove(prevWayPointEditComponent);
+  };
+
+  destroy = () => {
+    remove(this.#wayPointComponent);
+    remove(this.#wayPointEditComponent);
   };
 
   #replacePointToForm = () => replace(this.#wayPointEditComponent, this.#wayPointComponent);
