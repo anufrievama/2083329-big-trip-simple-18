@@ -126,17 +126,23 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, o
 
 export default class EditFormView extends AbstractView {
 
+  #wayPoint = null;
+  #offers = null;
+  #offersIds = null;
+  #destination = null;
+  #allDestinations = null;
+
   constructor(wayPoint = DEFAULT_WAY_POINT, offers = [], destination = null, allDestinations = []) {
     super();
-    this.wayPoint = wayPoint;
-    this.offers = offers;
-    this.offersIds = wayPoint.offers;
-    this.destination = destination;
-    this.allDestinations = allDestinations;
+    this.#wayPoint = wayPoint;
+    this.#offers = offers;
+    this.#offersIds = wayPoint.offers;
+    this.#destination = destination;
+    this.#allDestinations = allDestinations;
   }
 
   get template() {
-    return createEditFormTemplate(this.wayPoint, this.offers, this.offersIds, this.destination, this.allDestinations);
+    return createEditFormTemplate(this.#wayPoint, this.#offers, this.#offersIds, this.#destination, this.#allDestinations);
   }
 
   setRollupClickHandler = (callback) => {
@@ -156,7 +162,7 @@ export default class EditFormView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this.#wayPoint);
   };
 }
 

@@ -2,6 +2,7 @@ import WayPointView from '../view/waypoint-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import { isEscapeKey } from '../utils.js';
 import { render, replace, remove } from '../framework/render.js';
+import { Mode } from '../mock/const.js';
 
 export default class WayPointPresenter {
 
@@ -10,10 +11,15 @@ export default class WayPointPresenter {
   #wayPointEditComponent = null;
   #wayPointsModel = null;
   #wayPointListComponent = null;
+  #changeData = null;
+  #changeMode = null;
+  #mode = Mode.DEFAULT;
 
-  constructor(wayPointsModel, wayPointListComponent) {
+  constructor(wayPointsModel, wayPointListComponent, changeData, changeMode) {
     this.#wayPointsModel = wayPointsModel;
     this.#wayPointListComponent = wayPointListComponent;
+    this.#changeData = changeData;
+    this.#changeMode = changeMode;
   }
 
   init = (wayPoint) => {
@@ -39,11 +45,11 @@ export default class WayPointPresenter {
       return;
     }
 
-    if (this.#wayPointListComponent.contains(prevWayPointComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#wayPointComponent, prevWayPointComponent);
     }
 
-    if (this.#wayPointListComponent.contains(prevWayPointEditComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace(this.#wayPointEditComponent, prevWayPointEditComponent);
     }
 
@@ -56,9 +62,24 @@ export default class WayPointPresenter {
     remove(this.#wayPointEditComponent);
   };
 
-  #replacePointToForm = () => replace(this.#wayPointEditComponent, this.#wayPointComponent);
+  resetView = () => {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToPoint();
+    }
+  };
 
-  #replaceFormToPoint = () => replace(this.#wayPointComponent, this.#wayPointEditComponent);
+  #replacePointToForm = () => {
+    replace(this.#wayPointEditComponent, this.#wayPointComponent);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#changeMode();
+    this.#mode = Mode.EDITING;
+  };
+
+  #replaceFormToPoint = () => {
+    replace(this.#wayPointComponent, this.#wayPointEditComponent);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
+  };
 
   #escKeyDownHandler = (evt) => {
     if (isEscapeKey(evt.key)) {
@@ -70,17 +91,14 @@ export default class WayPointPresenter {
 
   #handleExpandClick = () => {
     this.#replacePointToForm();
-    document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleRollupClick = () => {
     this.#replaceFormToPoint();
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (wayPoint) => {
+    this.#changeData(wayPoint);
     this.#replaceFormToPoint();
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
-
 }

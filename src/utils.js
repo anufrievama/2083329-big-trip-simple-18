@@ -36,6 +36,18 @@ const getLastWord = (string) => {
 
 const isEscapeKey = (key) => key === 'Escape';
 
+const updateWayPoint = (wayPoints, updatedWayPoint) => {
+  const index = wayPoints.findIndex((point) => point.id === updatedWayPoint.id);
+  if (index === -1) {
+    return;
+  }
+  return [
+    ...wayPoints.slice(0, index),
+    updatedWayPoint,
+    ...wayPoints.slice(index + 1),
+  ];
+};
+
 export {
   getRandomArrayElement,
   getRandomInteger,
@@ -48,4 +60,5 @@ export {
   getLastWord,
   isEscapeKey,
   filter,
+  updateWayPoint
 };

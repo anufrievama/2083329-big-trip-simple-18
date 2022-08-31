@@ -2,6 +2,7 @@ import WayPointListView from '../view/waypoint-list-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import SortView from '../view/sort-view.js';
 import WayPointPresenter from './waypoint-presenter.js';
+import { updateWayPoint } from '../utils.js';
 import { render } from '../framework/render.js';
 
 export default class EventsPresenter {
@@ -12,6 +13,7 @@ export default class EventsPresenter {
   #wayPointListComponent = new WayPointListView();
   #sortComponent = new SortView();
   #emptyListComponent = new EmptyListView();
+  #wayPointPresenter = new Map();
 
   constructor(eventsContainer, wayPointsModel) {
     this.#eventsContainer = eventsContainer;
@@ -24,8 +26,12 @@ export default class EventsPresenter {
   };
 
   #renderWayPoint = (wayPoint) => {
-    const wayPointPresenter = new WayPointPresenter(this.#wayPointsModel, this.#wayPointListComponent);
+    const wayPointPresenter = new WayPointPresenter(this.#wayPointsModel,
+      this.#wayPointListComponent,
+      this.#handleWayPointChange,
+      this.#handleModeChange);
     wayPointPresenter.init(wayPoint);
+    this.#wayPointPresenter.set(wayPoint.id, wayPointPresenter);
   };
 
   #renderSort = () => render(this.#sortComponent, this.#eventsContainer);
@@ -44,5 +50,18 @@ export default class EventsPresenter {
     }
   };
 
+  #clearWayPointsList = () => {
+    this.#wayPointPresenter.forEach((presenter) => presenter.destroy());
+    this.#wayPointPresenter.clear();
+  };
+
+  #handleWayPointChange = (updatedWayPoint) => {
+    this.#wayPoints = updateWayPoint(this.#wayPoints, updatedWayPoint);
+    this.#wayPointPresenter.get(updatedWayPoint.id).init(updatedWayPoint);
+  };
+
+  #handleModeChange = () => {
+    this.#wayPointPresenter.forEach((presenter) => presenter.resetView());
+  };
 
 }
