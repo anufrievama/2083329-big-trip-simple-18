@@ -69,6 +69,11 @@ const FilterType = {
 
 const SortTypes = ['day','event','time', 'price','offers'];
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING'
+};
+
 export {
   COUNT_WAY_POINTS,
   URL_IMAGE, UNIT_DATE,
@@ -80,5 +85,6 @@ export {
   Price,
   CountPictures,
   FilterType,
-  SortTypes
+  SortTypes,
+  Mode
 };
