@@ -2,8 +2,9 @@ import WayPointListView from '../view/waypoint-list-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import SortView from '../view/sort-view.js';
 import WayPointPresenter from './waypoint-presenter.js';
-import { updateWayPoint } from '../utils.js';
+import { updateWayPoint, sortWayPointDay, sortWayPointPrice } from '../utils.js';
 import { render } from '../framework/render.js';
+import { SortType } from '../mock/const.js';
 
 export default class EventsPresenter {
 
@@ -14,6 +15,7 @@ export default class EventsPresenter {
   #sortComponent = new SortView();
   #emptyListComponent = new EmptyListView();
   #wayPointPresenter = new Map();
+  #currentSortType = SortType.DAY;
 
   constructor(eventsContainer, wayPointsModel) {
     this.#eventsContainer = eventsContainer;
@@ -22,6 +24,7 @@ export default class EventsPresenter {
 
   init = () => {
     this.#wayPoints = this.#wayPointsModel.wayPoints;
+    this.#sortWayPoints(this.#currentSortType);
     this.#renderWayPointsList();
   };
 
@@ -34,7 +37,10 @@ export default class EventsPresenter {
     this.#wayPointPresenter.set(wayPoint.id, wayPointPresenter);
   };
 
-  #renderSort = () => render(this.#sortComponent, this.#eventsContainer);
+  #renderSort = () => {
+    render(this.#sortComponent, this.#eventsContainer);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+  };
 
   #renderEmptyList = () => render(this.#emptyListComponent, this.#eventsContainer);
 
@@ -62,6 +68,27 @@ export default class EventsPresenter {
 
   #handleModeChange = () => {
     this.#wayPointPresenter.forEach((presenter) => presenter.resetView());
+  };
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#sortWayPoints(sortType);
+    this.#clearWayPointsList();
+    this.#renderWayPointsList();
+  };
+
+  #sortWayPoints = (sortType) => {
+    switch (sortType) {
+      case SortType.DAY:
+        this.#wayPoints.sort(sortWayPointDay);
+        break;
+      case SortType.PRICE:
+        this.#wayPoints.sort(sortWayPointPrice);
+        break;
+    }
+    this.#currentSortType = sortType;
   };
 
 }

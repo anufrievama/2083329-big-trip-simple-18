@@ -67,7 +67,13 @@ const FilterType = {
   FUTURE: 'future'
 };
 
-const SortTypes = ['day','event','time', 'price','offers'];
+const SortType = {
+  DAY: 'day',
+  EVENT: '',
+  TIME: '',
+  PRICE: 'price',
+  OFFERS: ''
+};
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -85,6 +91,6 @@ export {
   Price,
   CountPictures,
   FilterType,
-  SortTypes,
+  SortType,
   Mode
 };
