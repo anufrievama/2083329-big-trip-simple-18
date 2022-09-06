@@ -1,23 +1,40 @@
 import AbstractView from '../framework/view/abstract-view';
-import { SortTypes } from '../mock/const.js';
+import { SortType } from '../mock/const.js';
 
-const createSortItemTemplate = () => SortTypes.map((sortType, index) => {
-  const isChecked = index === 0 ? 'checked' : '';
-  const isDisabled = sortType === 'price' || sortType === 'day' ? '' : 'disabled';
-  return `<div class="trip-sort__item  trip-sort__item--${sortType}">
-    <input id="sort-${sortType}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sortType}" ${isChecked} ${isDisabled}>
-    <label class="trip-sort__btn" for="sort-${sortType}">${sortType}</label>
+const createSortItemTemplate = () => Object.entries(SortType).map(([key, value]) => {
+  const isChecked = value === SortType.DAY ? 'checked' : '';
+  const isDisabled = value !== '' ? '' : 'disabled';
+  const dataAttribute = value === '' ? '' : `data-sort-type="${value}"`;
+  const keyLowerCase = key.toLowerCase();
+  return `<div class="trip-sort__item  trip-sort__item--${keyLowerCase}">
+    <input id="sort-${keyLowerCase}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${keyLowerCase}" ${isChecked} ${isDisabled} ${dataAttribute}>
+    <label class="trip-sort__btn" for="sort-${keyLowerCase}">${key}</label>
   </div>`;
 }).join('');
 
 const createSortTemplate = () =>
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
   ${createSortItemTemplate()}
-</form>`;
+  </form>`;
 
 export default class SortView extends AbstractView {
+
   get template() {
     return createSortTemplate();
   }
+
+  setSortTypeChangeHandler = (callback) => {
+    this._callback.sortTypeChange = callback;
+    this.element.addEventListener('change', this.#sortTypeChangeHandler);
+  };
+
+  #sortTypeChangeHandler = (evt) => {
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+    evt.preventDefault();
+    this._callback.sortTypeChange(evt.target.dataset.sortType);
+  };
+
 }
 

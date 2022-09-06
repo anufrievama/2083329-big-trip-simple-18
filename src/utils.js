@@ -48,6 +48,10 @@ const updateWayPoint = (wayPoints, updatedWayPoint) => {
   ];
 };
 
+const sortWayPointDay = (point1, point2) => dayjs(point1.dateFrom).diff(dayjs(point2.dateFrom));
+
+const sortWayPointPrice = (point1, point2) => (point2.basePrice - point1.basePrice);
+
 export {
   getRandomArrayElement,
   getRandomInteger,
@@ -60,5 +64,7 @@ export {
   getLastWord,
   isEscapeKey,
   filter,
-  updateWayPoint
+  updateWayPoint,
+  sortWayPointDay,
+  sortWayPointPrice
 };
