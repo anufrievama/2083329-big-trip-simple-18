@@ -1,11 +1,13 @@
-import AbstractView from '../framework/view/abstract-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { WAY_POINT_TYPES, DEFAULT_WAY_POINT } from '../mock/const.js';
-import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord } from '../utils.js';
+import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord, getDestination, getOffersByType } from '../utils.js';
 
-const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, offersIds, destination, allDestinations) => {
+const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, destination }, allDestinations, allOffers) => {
 
   const eventDateStart = formatISOStringToDateTimeWithSlash(dateFrom);
   const eventDateEnd = formatISOStringToDateTimeWithSlash(dateTo);
+  const foundDestination = getDestination(destination, allDestinations);
+  const offersByType = getOffersByType(type, allOffers);
 
   const createEventTypeListTemplate = () => (WAY_POINT_TYPES.map((wayPointType) => {
     const checked = type === wayPointType ? 'checked' : '';
@@ -20,14 +22,14 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, o
     `<option value="${destinationItem.name}"></option>`
   )).join(''));
 
-
-  const createOfferTemplate = () => (offers.map(({ id, title, price }) => {
+  const createOfferTemplate = () => (offersByType.map(({ id, title, price }) => {
     const nameOffer = getLastWord(title);
     const idOffer = `${nameOffer}-${id}`;
-    const checked = offersIds.includes(id) ? 'checked' : '';
+    const checked = offers.includes(id) ? 'checked' : '';
+    const dataAttribute = `data-id-offer="${id}"`;
     return `<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${idOffer}" type="checkbox" name="event-offer-${nameOffer}" ${checked}>
-            <label class="event__offer-label" for="event-${idOffer}">
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${idOffer}" type="checkbox" name="event-offer-${nameOffer}" ${checked} ${dataAttribute}>
+            <label class="event__offer-label" for="event-offer-${idOffer}">
               <span class="event__offer-title">${title}</span>
               &plus;&euro;&nbsp;
               <span class="event__offer-price">${price}</span>
@@ -36,28 +38,25 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, o
   }
   ).join(''));
 
-
   const createPhotosTemplate = (pictures) => (pictures.map((picture) => (
     `<img class="event__photo" src="${picture.src}" alt="Event photo">`
   )).join(''));
 
   const createPhotosContainerTemplate = () =>
-    'pictures' in destination
+    'pictures' in foundDestination
       ? `<div class="event__photos-container">
       <div class="event__photos-tape">
-       ${createPhotosTemplate(destination.pictures)}
+       ${createPhotosTemplate(foundDestination.pictures)}
       </div>
     </div>`
       : '';
 
   const createDestinationsContainerTemplate = () =>
-    destination !== null ?
-      `<section class="event__section  event__section--destination">
+    `<section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${destination.description}</p>
+          <p class="event__destination-description">${foundDestination.description}</p>
           ${createPhotosContainerTemplate()}
-        </section>`
-      : '';
+        </section>`;
 
   return (
     `<li class="trip-events__item">
@@ -82,7 +81,7 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, o
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${foundDestination.name}" list="destination-list-1">
           <datalist id="destination-list-1">
           ${createDestinationOptionsTemplate()}
           </datalist>
@@ -124,26 +123,30 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, o
 </li>`);
 };
 
-export default class EditFormView extends AbstractView {
+export default class EditFormView extends AbstractStatefulView {
 
-  #wayPoint = null;
-  #offers = null;
-  #offersIds = null;
-  #destination = null;
   #allDestinations = null;
+  #allOffers = null;
 
-  constructor(wayPoint = DEFAULT_WAY_POINT, offers = [], destination = null, allDestinations = []) {
+  constructor(wayPoint = DEFAULT_WAY_POINT, allDestinations = [], allOffers = []) {
     super();
-    this.#wayPoint = wayPoint;
-    this.#offers = offers;
-    this.#offersIds = wayPoint.offers;
-    this.#destination = destination;
+    this._state = EditFormView.parseWayPointToState(wayPoint);
     this.#allDestinations = allDestinations;
+    this.#allOffers = allOffers;
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createEditFormTemplate(this.#wayPoint, this.#offers, this.#offersIds, this.#destination, this.#allDestinations);
+    return createEditFormTemplate(this._state, this.#allDestinations, this.#allOffers);
   }
+
+  static parseWayPointToState = (wayPoint) => ({
+    ...wayPoint,
+  });
+
+  static parseStateToWayPoint = (state) => ({
+    ...state
+  });
 
   setRollupClickHandler = (callback) => {
     this._callback.rollupClick = callback;
@@ -162,7 +165,79 @@ export default class EditFormView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(this.#wayPoint);
+    this._callback.formSubmit(EditFormView.parseStateToWayPoint(this._state));
+  };
+
+  #eventTypeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      type: evt.target.value,
+      offers: [],
+    });
+  };
+
+  #eventDestinationHandler = (evt) => {
+    evt.preventDefault();
+    if (evt.target.value !== '') {
+      this.updateElement({
+        destination: this.#allDestinations.find((destination) => evt.target.value === destination.name).id,
+      });
+    }
+  };
+
+  #eventPriceHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      basePrice: evt.target.value,
+    });
+  };
+
+  #eventTimeStartHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      dateFrom: evt.target.value,
+    });
+  };
+
+  #eventTimeEndHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      dateTo: evt.target.value,
+    });
+  };
+
+  #eventOfferHandler = (evt) => {
+    evt.preventDefault();
+    const newOffers = this._state.offers.slice();
+    const idOffer = Number(evt.target.dataset.idOffer);
+    if (evt.target.checked) {
+      newOffers.push(idOffer);
+    } else {
+      newOffers.splice(newOffers.indexOf(idOffer), 1);
+    }
+    this.updateElement({
+      offers: newOffers,
+    });
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setRollupClickHandler(this._callback.rollupClick);
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#eventDestinationHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#eventPriceHandler);
+    this.element.querySelector('#event-start-time-1').addEventListener('change', this.#eventTimeStartHandler);
+    this.element.querySelector('#event-end-time-1').addEventListener('change', this.#eventTimeEndHandler);
+    this.element.querySelector('.event__available-offers').addEventListener('change', this.#eventOfferHandler);
+  };
+
+  reset = (wayPoint) => {
+    this.updateElement(
+      EditFormView.parseWayPointToState(wayPoint),
+    );
   };
 }
-

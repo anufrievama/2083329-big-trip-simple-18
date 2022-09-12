@@ -10,7 +10,7 @@ const generateDestination = (id) => (
   {
     id,
     description: getRandomArrayElement(DESTINATION_DESCRIPTIONS),
-    name: DESTINATION_NAMES[id],
+    name: DESTINATION_NAMES[id - 1],
     pictures: generatePictures(),
   }
 );

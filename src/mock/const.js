@@ -1,5 +1,5 @@
 const COUNT_WAY_POINTS = 10;
-const URL_IMAGE = 'http://picsum.photos/248/152?r=';
+const URL_IMAGE = 'http://loremflickr.com/248/152?lock=';
 const UNIT_DATE = 'minute';
 const WAY_POINT_TYPES = [
   'taxi',
@@ -52,7 +52,7 @@ const DESTINATION_NAMES = [
   'Paris',
   'London',
   'Rome',
-  'Sofia',
+  'Sofia'
 ];
 
 const DESTINATION_DESCRIPTIONS = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna,
