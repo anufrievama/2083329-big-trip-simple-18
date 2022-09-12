@@ -32,9 +32,8 @@ export default class WayPointPresenter {
       this.#wayPointsModel.getDestination(wayPoint));
 
     this.#wayPointEditComponent = new EditFormView(wayPoint,
-      this.#wayPointsModel.getOffersByType(wayPoint),
-      this.#wayPointsModel.getDestination(wayPoint),
-      this.#wayPointsModel.allDestinations);
+      this.#wayPointsModel.allDestinations,
+      this.#wayPointsModel.allOffers);
 
     this.#wayPointComponent.setRollupClickHandler(this.#handleExpandClick);
     this.#wayPointEditComponent.setRollupClickHandler(this.#handleRollupClick);
@@ -64,6 +63,7 @@ export default class WayPointPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#wayPointEditComponent.reset(this.#wayPoint);
       this.#replaceFormToPoint();
     }
   };
@@ -84,6 +84,7 @@ export default class WayPointPresenter {
   #escKeyDownHandler = (evt) => {
     if (isEscapeKey(evt.key)) {
       evt.preventDefault();
+      this.#wayPointEditComponent.reset(this.#wayPoint);
       this.#replaceFormToPoint();
       document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
@@ -94,6 +95,7 @@ export default class WayPointPresenter {
   };
 
   #handleRollupClick = () => {
+    this.#wayPointEditComponent.reset(this.#wayPoint);
     this.#replaceFormToPoint();
   };
 

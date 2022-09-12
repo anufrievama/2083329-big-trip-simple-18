@@ -1,6 +1,7 @@
 import { generateWayPoints } from '../mock/waypoints.js';
 import { generateOffers } from '../mock/offers.js';
 import { generateDestinations } from '../mock/destination.js';
+import { getOffersByType, getDestination } from '../utils.js';
 
 export default class WayPointsModel {
   #wayPoints = generateWayPoints();
@@ -15,8 +16,11 @@ export default class WayPointsModel {
     return this.#allDestinations;
   }
 
-  getOffersByType = (wayPoint) => this.#allOffers.find((offer) => wayPoint.type === offer.type).offers;
-  getOffers = (wayPoint) => this.getOffersByType(wayPoint).filter((offer) => wayPoint.offers.includes(offer.id));
-  getDestination = (wayPoint) => this.#allDestinations.find((destination) => destination.id === wayPoint.destination);
+  get allOffers() {
+    return this.#allOffers;
+  }
+
+  getOffers = (wayPoint) => getOffersByType(wayPoint.type, this.#allOffers).filter((offer) => wayPoint.offers.includes(offer.id));
+  getDestination = (wayPoint) => getDestination(wayPoint.destination, this.#allDestinations);
 
 }
