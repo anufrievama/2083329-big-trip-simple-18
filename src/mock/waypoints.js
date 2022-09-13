@@ -7,8 +7,8 @@ import { nanoid } from 'nanoid';
 const generateWayPoint = () => ({
   id: nanoid(),
   basePrice: getRandomInteger(Price.MIN, Price.MAX),
-  dateFrom: dayjs().subtract(getRandomInteger(), 'hour'),
-  dateTo: dayjs().add(getRandomInteger(), 'hour'),
+  dateFrom: new Date(dayjs().subtract(getRandomInteger(), 'hour')),
+  dateTo: new Date(dayjs().add(getRandomInteger(), 'hour')),
   destination: getRandomInteger(1, DESTINATION_NAMES.length - 1),
   offers: [...new Set(generateRandomOfferIds())],
   type: getRandomArrayElement(WAY_POINT_TYPES),
