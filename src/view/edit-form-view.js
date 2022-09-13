@@ -1,6 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { WAY_POINT_TYPES, DEFAULT_WAY_POINT } from '../mock/const.js';
-import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord, getDestination, getOffersByType } from '../utils.js';
+import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord, getDestinationById, getOffersByType } from '../utils.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -8,7 +8,7 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, des
 
   const eventDateStart = formatISOStringToDateTimeWithSlash(dateFrom);
   const eventDateEnd = formatISOStringToDateTimeWithSlash(dateTo);
-  const foundDestination = getDestination(destination, allDestinations);
+  const foundDestination = getDestinationById(destination, allDestinations);
   const offersByType = getOffersByType(type, allOffers);
 
   const createEventTypeListTemplate = () => (WAY_POINT_TYPES.map((wayPointType) => {
@@ -198,18 +198,6 @@ export default class EditFormView extends AbstractStatefulView {
     });
   };
 
-  #eventTimeStartHandler = ([userDate]) => {
-    this.updateElement({
-      dateFrom: userDate,
-    });
-  };
-
-  #eventTimeEndHandler = ([userDate]) => {
-    this.updateElement({
-      dateTo: [userDate],
-    });
-  };
-
   #eventOfferHandler = (evt) => {
     evt.preventDefault();
     const newOffers = this._state.offers.slice();
@@ -239,24 +227,35 @@ export default class EditFormView extends AbstractStatefulView {
         enableTime: true,
         'time_24hr': true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.dateFrom,
-        onClose: this.#eventTimeStartHandler,
+        maxDate: this._state.dateTo,
+        onChange: this.#eventDateStartHandler,
       },
     );
   };
 
   #setDatepickerEnd = () => {
-    this.#datepickerStart = flatpickr(
+    this.#datepickerEnd = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
         enableTime: true,
         'time_24hr': true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.dateTo,
         minDate: this._state.dateFrom,
-        onClose: this.#eventTimeEndHandler,
+        onChange: this.#eventDateEndHandler,
       },
     );
+  };
+
+  #eventDateStartHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+  };
+
+  #eventDateEndHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
   };
 
   #setInnerHandlers = () => {

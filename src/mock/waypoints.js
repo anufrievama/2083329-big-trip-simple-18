@@ -8,7 +8,7 @@ const generateWayPoint = () => ({
   id: nanoid(),
   basePrice: getRandomInteger(Price.MIN, Price.MAX),
   dateFrom: dayjs().subtract(getRandomInteger(), 'hour'),
-  dateTo: dayjs(),
+  dateTo: dayjs().add(getRandomInteger(), 'hour'),
   destination: getRandomInteger(1, DESTINATION_NAMES.length - 1),
   offers: [...new Set(generateRandomOfferIds())],
   type: getRandomArrayElement(WAY_POINT_TYPES),
