@@ -1,12 +1,14 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { WAY_POINT_TYPES, DEFAULT_WAY_POINT } from '../mock/const.js';
-import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord, getDestination, getOffersByType } from '../utils.js';
+import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord, getDestinationById, getOffersByType } from '../utils.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, destination }, allDestinations, allOffers) => {
 
   const eventDateStart = formatISOStringToDateTimeWithSlash(dateFrom);
   const eventDateEnd = formatISOStringToDateTimeWithSlash(dateTo);
-  const foundDestination = getDestination(destination, allDestinations);
+  const foundDestination = getDestinationById(destination, allDestinations);
   const offersByType = getOffersByType(type, allOffers);
 
   const createEventTypeListTemplate = () => (WAY_POINT_TYPES.map((wayPointType) => {
@@ -125,6 +127,8 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, des
 
 export default class EditFormView extends AbstractStatefulView {
 
+  #datepickerStart = null;
+  #datepickerEnd = null;
   #allDestinations = null;
   #allOffers = null;
 
@@ -134,6 +138,8 @@ export default class EditFormView extends AbstractStatefulView {
     this.#allDestinations = allDestinations;
     this.#allOffers = allOffers;
     this.#setInnerHandlers();
+    this.#setDatepickerStart();
+    this.#setDatepickerEnd();
   }
 
   get template() {
@@ -192,20 +198,6 @@ export default class EditFormView extends AbstractStatefulView {
     });
   };
 
-  #eventTimeStartHandler = (evt) => {
-    evt.preventDefault();
-    this.updateElement({
-      dateFrom: evt.target.value,
-    });
-  };
-
-  #eventTimeEndHandler = (evt) => {
-    evt.preventDefault();
-    this.updateElement({
-      dateTo: evt.target.value,
-    });
-  };
-
   #eventOfferHandler = (evt) => {
     evt.preventDefault();
     const newOffers = this._state.offers.slice();
@@ -224,14 +216,52 @@ export default class EditFormView extends AbstractStatefulView {
     this.#setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setRollupClickHandler(this._callback.rollupClick);
+    this.#setDatepickerStart();
+    this.#setDatepickerEnd();
+  };
+
+  #setDatepickerStart = () => {
+    this.#datepickerStart = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        enableTime: true,
+        'time_24hr': true,
+        dateFormat: 'd/m/y H:i',
+        maxDate: this._state.dateTo,
+        onChange: this.#eventDateStartHandler,
+      },
+    );
+  };
+
+  #setDatepickerEnd = () => {
+    this.#datepickerEnd = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        enableTime: true,
+        'time_24hr': true,
+        dateFormat: 'd/m/y H:i',
+        minDate: this._state.dateFrom,
+        onChange: this.#eventDateEndHandler,
+      },
+    );
+  };
+
+  #eventDateStartHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+  };
+
+  #eventDateEndHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
   };
 
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#eventDestinationHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#eventPriceHandler);
-    this.element.querySelector('#event-start-time-1').addEventListener('change', this.#eventTimeStartHandler);
-    this.element.querySelector('#event-end-time-1').addEventListener('change', this.#eventTimeEndHandler);
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#eventOfferHandler);
   };
 
@@ -240,4 +270,19 @@ export default class EditFormView extends AbstractStatefulView {
       EditFormView.parseWayPointToState(wayPoint),
     );
   };
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepickerStart) {
+      this.#datepickerStart.destroy();
+      this.#datepickerStart = null;
+    }
+
+    if (this.#datepickerEnd) {
+      this.#datepickerEnd.destroy();
+      this.#datepickerEnd = null;
+    }
+  };
+
 }
