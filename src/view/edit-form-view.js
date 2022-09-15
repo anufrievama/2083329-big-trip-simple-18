@@ -193,7 +193,7 @@ export default class EditFormView extends AbstractStatefulView {
 
   #eventPriceHandler = (evt) => {
     evt.preventDefault();
-    this.updateElement({
+    this._setState({
       basePrice: evt.target.value,
     });
   };

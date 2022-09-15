@@ -1,6 +1,6 @@
 import WayPointView from '../view/waypoint-view.js';
 import EditFormView from '../view/edit-form-view.js';
-import { isEscapeKey } from '../utils.js';
+import { isEscapeKey, getOffers, getDestinationById } from '../utils.js';
 import { render, replace, remove } from '../framework/render.js';
 import { Mode } from '../mock/const.js';
 
@@ -28,8 +28,8 @@ export default class WayPointPresenter {
     const prevWayPointEditComponent = this.#wayPointEditComponent;
 
     this.#wayPointComponent = new WayPointView(wayPoint,
-      this.#wayPointsModel.getOffers(wayPoint),
-      this.#wayPointsModel.getDestination(wayPoint));
+      getOffers(wayPoint, this.#wayPointsModel.allOffers),
+      getDestinationById(wayPoint.destination, this.#wayPointsModel.allDestinations));
 
     this.#wayPointEditComponent = new EditFormView(wayPoint,
       this.#wayPointsModel.allDestinations,

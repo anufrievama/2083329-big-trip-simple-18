@@ -56,6 +56,8 @@ const getDestinationById = (idDestination, allDestinations) => allDestinations.f
 
 const getOffersByType = (typeOffer, allOffers) => allOffers.find((offer) => offer.type === typeOffer).offers;
 
+const getOffers = (wayPoint, allOffers) => getOffersByType(wayPoint.type, allOffers).filter((offer) => wayPoint.offers.includes(offer.id));
+
 export {
   getRandomArrayElement,
   getRandomInteger,
@@ -72,5 +74,6 @@ export {
   sortWayPointDay,
   sortWayPointPrice,
   getDestinationById,
-  getOffersByType
+  getOffersByType,
+  getOffers
 };

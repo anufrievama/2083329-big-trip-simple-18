@@ -10,6 +10,7 @@ const createWayPointTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, {
   const eventDateTimeStart = formatISOStringToDateTime(dateFrom);
   const eventDateTimeEnd = formatISOStringToDateTime(dateTo);
 
+
   const createOfferTemplate = () => {
     if (offers.length === 0) {
       return ` <li class="event__offer">
