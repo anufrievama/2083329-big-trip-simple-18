@@ -200,13 +200,10 @@ export default class EditFormView extends AbstractStatefulView {
 
   #eventOfferHandler = (evt) => {
     evt.preventDefault();
-    const newOffers = this._state.offers.slice();
-    const idOffer = Number(evt.target.dataset.idOffer);
-    if (evt.target.checked) {
-      newOffers.push(idOffer);
-    } else {
-      newOffers.splice(newOffers.indexOf(idOffer), 1);
-    }
+    const newOffers = [];
+    this.element.querySelector('.event__available-offers')
+      .querySelectorAll('input[type="checkbox"]:checked')
+      .forEach((nodeItem) => newOffers.push(Number(nodeItem.dataset.idOffer)));
     this.updateElement({
       offers: newOffers,
     });
