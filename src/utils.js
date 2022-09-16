@@ -36,18 +36,6 @@ const getLastWord = (string) => {
 
 const isEscapeKey = (key) => key === 'Escape';
 
-const updateWayPoint = (wayPoints, updatedWayPoint) => {
-  const index = wayPoints.findIndex((point) => point.id === updatedWayPoint.id);
-  if (index === -1) {
-    return;
-  }
-  return [
-    ...wayPoints.slice(0, index),
-    updatedWayPoint,
-    ...wayPoints.slice(index + 1),
-  ];
-};
-
 const sortWayPointDay = (point1, point2) => dayjs(point1.dateFrom).diff(dayjs(point2.dateFrom));
 
 const sortWayPointPrice = (point1, point2) => (point2.basePrice - point1.basePrice);
@@ -70,7 +58,6 @@ export {
   getLastWord,
   isEscapeKey,
   filter,
-  updateWayPoint,
   sortWayPointDay,
   sortWayPointPrice,
   getDestinationById,

@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view';
 import { SortType } from '../mock/const.js';
 
-const createSortItemTemplate = () => Object.entries(SortType).map(([key, value]) => {
-  const isChecked = value === SortType.DAY ? 'checked' : '';
+const createSortItemTemplate = (currentSortType) => Object.entries(SortType).map(([key, value]) => {
+  const isChecked = value === currentSortType ? 'checked' : '';
   const isDisabled = value !== '' ? '' : 'disabled';
   const dataAttribute = value === '' ? '' : `data-sort-type="${value}"`;
   const keyLowerCase = key.toLowerCase();
@@ -12,15 +12,22 @@ const createSortItemTemplate = () => Object.entries(SortType).map(([key, value])
   </div>`;
 }).join('');
 
-const createSortTemplate = () =>
+const createSortTemplate = (currentSortType) =>
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-  ${createSortItemTemplate()}
+  ${createSortItemTemplate(currentSortType)}
   </form>`;
 
 export default class SortView extends AbstractView {
 
+  #currentSortType = null;
+
+  constructor(currentSortType) {
+    super();
+    this.#currentSortType = currentSortType;
+  }
+
   get template() {
-    return createSortTemplate();
+    return createSortTemplate(this.#currentSortType);
   }
 
   setSortTypeChangeHandler = (callback) => {

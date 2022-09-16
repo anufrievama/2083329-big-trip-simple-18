@@ -2,7 +2,7 @@ import WayPointView from '../view/waypoint-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import { isEscapeKey, getOffers, getDestinationById } from '../utils.js';
 import { render, replace, remove } from '../framework/render.js';
-import { Mode } from '../mock/const.js';
+import { Mode, UserAction, UpdateType } from '../mock/const.js';
 
 export default class WayPointPresenter {
 
@@ -100,7 +100,11 @@ export default class WayPointPresenter {
   };
 
   #handleFormSubmit = (wayPoint) => {
-    this.#changeData(wayPoint);
+    this.#changeData(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
+      wayPoint
+    );
     this.#replaceFormToPoint();
   };
 }
