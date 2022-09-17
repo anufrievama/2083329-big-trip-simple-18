@@ -1,6 +1,6 @@
 import WayPointView from '../view/waypoint-view.js';
 import EditFormView from '../view/edit-form-view.js';
-import { isEscapeKey, getOffers, getDestinationById } from '../utils.js';
+import { isEscapeKey, getOffers, getDestinationById, isDatesEqual } from '../utils.js';
 import { render, replace, remove } from '../framework/render.js';
 import { Mode, UserAction, UpdateType } from '../mock/const.js';
 
@@ -100,11 +100,12 @@ export default class WayPointPresenter {
     this.#replaceFormToPoint();
   };
 
-  #handleFormSubmit = (wayPoint) => {
+  #handleFormSubmit = (update) => {
+    const isMinorUpdate = !(isDatesEqual(this.#wayPoint.dateFrom, update.dateFrom) && isDatesEqual(this.#wayPoint.dateTo, update.dateTo));
     this.#changeData(
       UserAction.UPDATE_WAYPOINT,
-      UpdateType.MINOR,
-      wayPoint
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
     );
     this.#replaceFormToPoint();
   };

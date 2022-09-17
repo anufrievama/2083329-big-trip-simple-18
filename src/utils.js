@@ -4,6 +4,8 @@ import { FilterType } from './mock/const.js';
 
 const isFutureDate = (dateStart, dateEnd) => dayjs().isBefore(dayjs(dateStart), UNIT_DATE) || dayjs().isBefore(dayjs(dateEnd), UNIT_DATE);
 
+const isDatesEqual = (date1, date2) => (date1 === null && date2 === null) || dayjs(date1).isSame(date2, UNIT_DATE);
+
 const filter = {
   [FilterType.EVERYTHING]: (wayPoints) => wayPoints,
   [FilterType.FUTURE]: (wayPoints) => wayPoints.filter((wayPoint) => isFutureDate(wayPoint.dateTo, wayPoint.dateFrom)),
@@ -62,5 +64,6 @@ export {
   sortWayPointPrice,
   getDestinationById,
   getOffersByType,
-  getOffers
+  getOffers,
+  isDatesEqual
 };
