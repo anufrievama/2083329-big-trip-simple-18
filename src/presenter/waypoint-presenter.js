@@ -38,6 +38,7 @@ export default class WayPointPresenter {
     this.#wayPointComponent.setRollupClickHandler(this.#handleExpandClick);
     this.#wayPointEditComponent.setRollupClickHandler(this.#handleRollupClick);
     this.#wayPointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
+    this.#wayPointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevWayPointComponent === null || prevWayPointEditComponent === null) {
       render(this.#wayPointComponent, this.#wayPointListComponent.element);
@@ -101,10 +102,18 @@ export default class WayPointPresenter {
 
   #handleFormSubmit = (wayPoint) => {
     this.#changeData(
-      UserAction.UPDATE_TASK,
+      UserAction.UPDATE_WAYPOINT,
       UpdateType.MINOR,
       wayPoint
     );
     this.#replaceFormToPoint();
+  };
+
+  #handleDeleteClick = (wayPoint) => {
+    this.#changeData(
+      UserAction.DELETE_WAYPOINT,
+      UpdateType.MINOR,
+      wayPoint,
+    );
   };
 }

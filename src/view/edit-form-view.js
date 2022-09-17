@@ -259,6 +259,16 @@ export default class EditFormView extends AbstractStatefulView {
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#eventOfferHandler);
   };
 
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#eventDeleteClickHandler);
+  };
+
+  #eventDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(EditFormView.parseStateToWayPoint(this._state));
+  };
+
   reset = (wayPoint) => {
     this.updateElement(
       EditFormView.parseWayPointToState(wayPoint),

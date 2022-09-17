@@ -68,13 +68,13 @@ export default class EventsPresenter {
 
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
-      case UserAction.UPDATE_TASK:
+      case UserAction.UPDATE_WAYPOINT:
         this.#wayPointsModel.updateWayPoint(updateType, update);
         break;
-      case UserAction.ADD_TASK:
+      case UserAction.ADD_WAYPOINT:
         this.#wayPointsModel.addWayPoint(updateType, update);
         break;
-      case UserAction.DELETE_TASK:
+      case UserAction.DELETE_WAYPOINT:
         this.#wayPointsModel.deleteWayPoint(updateType, update);
         break;
     }

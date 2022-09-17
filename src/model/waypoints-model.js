@@ -48,7 +48,7 @@ export default class WayPointsModel extends Observable {
     }
     this.#wayPoints = [
       ...this.#wayPoints.slice(0, index),
-      ...this.#wayPoints(index + 1),
+      ...this.#wayPoints.slice(index + 1),
     ];
     this._notify(updateType, update);
   };
