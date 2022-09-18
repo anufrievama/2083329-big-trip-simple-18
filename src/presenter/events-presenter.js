@@ -2,7 +2,7 @@ import WayPointListView from '../view/waypoint-list-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import SortView from '../view/sort-view.js';
 import WayPointPresenter from './waypoint-presenter.js';
-import { sortWayPointDay, sortWayPointPrice } from '../utils.js';
+import { sortWayPointDay, sortWayPointPrice, filter } from '../utils.js';
 import { render, remove } from '../framework/render.js';
 import { SortType, UpdateType, UserAction } from '../mock/const.js';
 
@@ -11,25 +11,32 @@ export default class EventsPresenter {
   #eventsContainer = null;
   #wayPointsModel = null;
   #sortComponent = null;
+  #filterModel = null;
   #wayPointListComponent = new WayPointListView();
   #emptyListComponent = new EmptyListView();
   #wayPointPresenter = new Map();
   #currentSortType = SortType.DAY;
 
-  constructor(eventsContainer, wayPointsModel) {
+  constructor(eventsContainer, wayPointsModel, filterModel) {
     this.#eventsContainer = eventsContainer;
     this.#wayPointsModel = wayPointsModel;
+    this.#filterModel = filterModel;
     this.#wayPointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get wayPoints() {
+    const filterType = this.#filterModel.filter;
+    const wayPoints = this.#wayPointsModel.wayPoints;
+    const filteredWayPoints = filter[filterType](wayPoints);
+
     switch (this.#currentSortType) {
       case SortType.DAY:
-        return [...this.#wayPointsModel.wayPoints].sort(sortWayPointDay);
+        return filteredWayPoints.sort(sortWayPointDay);
       case SortType.PRICE:
-        return [...this.#wayPointsModel.wayPoints].sort(sortWayPointPrice);
+        return filteredWayPoints.sort(sortWayPointPrice);
     }
-    return this.#wayPointsModel.wayPoints;
+    return filteredWayPoints;
   }
 
   init = () => {

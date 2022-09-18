@@ -63,8 +63,8 @@ sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc 
 ac purus sit amet tempus.`.split('. ');
 
 const FilterType = {
-  EVERYTHING: 'everything',
-  FUTURE: 'future'
+  EVERYTHING: 'Everything',
+  FUTURE: 'Future'
 };
 
 const SortType = {

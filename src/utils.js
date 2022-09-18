@@ -8,7 +8,7 @@ const isDatesEqual = (date1, date2) => (date1 === null && date2 === null) || day
 
 const filter = {
   [FilterType.EVERYTHING]: (wayPoints) => wayPoints,
-  [FilterType.FUTURE]: (wayPoints) => wayPoints.filter((wayPoint) => isFutureDate(wayPoint.dateTo, wayPoint.dateFrom)),
+  [FilterType.FUTURE]: (wayPoints) => wayPoints.filter((wayPoint) => isFutureDate(wayPoint.dateFrom, wayPoint.dateTo)),
 };
 
 const getRandomInteger = (min = 1, max = 1000) => {
