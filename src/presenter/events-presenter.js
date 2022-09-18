@@ -4,7 +4,7 @@ import SortView from '../view/sort-view.js';
 import WayPointPresenter from './waypoint-presenter.js';
 import { sortWayPointDay, sortWayPointPrice, filter } from '../utils.js';
 import { render, remove } from '../framework/render.js';
-import { SortType, UpdateType, UserAction } from '../mock/const.js';
+import { SortType, UpdateType, UserAction, FilterType } from '../mock/const.js';
 
 export default class EventsPresenter {
 
@@ -12,8 +12,9 @@ export default class EventsPresenter {
   #wayPointsModel = null;
   #sortComponent = null;
   #filterModel = null;
+  #emptyListComponent = null;
+  #filterType = FilterType.EVERYTHING;
   #wayPointListComponent = new WayPointListView();
-  #emptyListComponent = new EmptyListView();
   #wayPointPresenter = new Map();
   #currentSortType = SortType.DAY;
 
@@ -26,9 +27,9 @@ export default class EventsPresenter {
   }
 
   get wayPoints() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const wayPoints = this.#wayPointsModel.wayPoints;
-    const filteredWayPoints = filter[filterType](wayPoints);
+    const filteredWayPoints = filter[this.#filterType](wayPoints);
 
     switch (this.#currentSortType) {
       case SortType.DAY:
@@ -58,7 +59,10 @@ export default class EventsPresenter {
     render(this.#sortComponent, this.#eventsContainer);
   };
 
-  #renderEmptyList = () => render(this.#emptyListComponent, this.#eventsContainer);
+  #renderEmptyList = () => {
+    this.#emptyListComponent = new EmptyListView(this.#filterType);
+    render(this.#emptyListComponent, this.#eventsContainer);
+  };
 
   #handleModeChange = () => {
     this.#wayPointPresenter.forEach((presenter) => presenter.resetView());
@@ -108,7 +112,9 @@ export default class EventsPresenter {
     this.#wayPointPresenter.clear();
 
     remove(this.#sortComponent);
-    remove(this.#emptyListComponent);
+    if (this.#emptyListComponent) {
+      remove(this.#emptyListComponent);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;
