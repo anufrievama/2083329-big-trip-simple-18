@@ -2,6 +2,7 @@ import WayPointListView from '../view/waypoint-list-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import SortView from '../view/sort-view.js';
 import WayPointPresenter from './waypoint-presenter.js';
+import WayPointNewPresenter from './waypoint-new-presenter.js';
 import { sortWayPointDay, sortWayPointPrice, filter } from '../utils.js';
 import { render, remove } from '../framework/render.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../mock/const.js';
@@ -16,12 +17,16 @@ export default class EventsPresenter {
   #filterType = FilterType.EVERYTHING;
   #wayPointListComponent = new WayPointListView();
   #wayPointPresenter = new Map();
+  #wayPointNewPresenter = null;
   #currentSortType = SortType.DAY;
 
   constructor(eventsContainer, wayPointsModel, filterModel) {
     this.#eventsContainer = eventsContainer;
     this.#wayPointsModel = wayPointsModel;
     this.#filterModel = filterModel;
+    this.#wayPointNewPresenter = new WayPointNewPresenter(this.#wayPointsModel,
+      this.#wayPointListComponent,
+      this.#handleViewAction);
     this.#wayPointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -42,6 +47,12 @@ export default class EventsPresenter {
 
   init = () => {
     this.#renderPage();
+  };
+
+  createWayPoint = (callback) => {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#wayPointNewPresenter.init(callback);
   };
 
   #renderWayPoint = (wayPoint) => {
@@ -65,6 +76,7 @@ export default class EventsPresenter {
   };
 
   #handleModeChange = () => {
+    this.#wayPointNewPresenter.destroy();
     this.#wayPointPresenter.forEach((presenter) => presenter.resetView());
   };
 
@@ -108,6 +120,7 @@ export default class EventsPresenter {
   };
 
   #clearPage = ({ resetSortType = false } = {}) => {
+    this.#wayPointNewPresenter.destroy();
     this.#wayPointPresenter.forEach((presenter) => presenter.destroy());
     this.#wayPointPresenter.clear();
 

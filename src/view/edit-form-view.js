@@ -1,14 +1,14 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { WAY_POINT_TYPES, DEFAULT_WAY_POINT } from '../mock/const.js';
+import { WAY_POINT_TYPES } from '../mock/const.js';
 import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord, getDestinationById, getOffersByType } from '../utils.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, destination }, allDestinations, allOffers) => {
+const createEditFormTemplate = ({ id, type, basePrice, dateFrom, dateTo, offers, destination }, allDestinations, allOffers) => {
 
   const eventDateStart = formatISOStringToDateTimeWithSlash(dateFrom);
   const eventDateEnd = formatISOStringToDateTimeWithSlash(dateTo);
-  const foundDestination = getDestinationById(destination, allDestinations);
+  const foundDestination = destination !== null ? getDestinationById(destination, allDestinations) : {};
   const offersByType = getOffersByType(type, allOffers);
 
   const createEventTypeListTemplate = () => (WAY_POINT_TYPES.map((wayPointType) => {
@@ -24,11 +24,12 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, des
     `<option value="${destinationItem.name}"></option>`
   )).join(''));
 
-  const createOfferTemplate = () => (offersByType.map(({ id, title, price }) => {
+  const createOfferTemplate = () => (offersByType.map((offer) => {
+    const { price, title } = offer;
     const nameOffer = getLastWord(title);
-    const idOffer = `${nameOffer}-${id}`;
-    const checked = offers.includes(id) ? 'checked' : '';
-    const dataAttribute = `data-id-offer="${id}"`;
+    const idOffer = `${nameOffer}-${offer.id}`;
+    const checked = offers.includes(offer.id) ? 'checked' : '';
+    const dataAttribute = `data-id-offer="${offer.id}"`;
     return `<div class="event__offer-selector">
           <input class="event__offer-checkbox  visually-hidden" id="event-offer-${idOffer}" type="checkbox" name="event-offer-${nameOffer}" ${checked} ${dataAttribute}>
             <label class="event__offer-label" for="event-offer-${idOffer}">
@@ -54,11 +55,26 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, des
       : '';
 
   const createDestinationsContainerTemplate = () =>
-    `<section class="event__section  event__section--destination">
+    'description' in foundDestination
+      ? `<section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${foundDestination.description}</p>
           ${createPhotosContainerTemplate()}
-        </section>`;
+        </section>`
+      : '';
+  const destinationName = 'name' in foundDestination ? foundDestination.name : '';
+
+  const createButtonContainerTemplate = () =>
+    id !== null
+      ? ` <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+            <button class="event__reset-btn" type="reset">Delete</button>
+            <button class="event__rollup-btn" type="button">
+          <span class="visually-hidden">Open event</span>
+        </button>`
+      : `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+          <button class="event__reset-btn" type="reset">Cancel</button>
+          <button class="event__rollup-btn" type="button">
+        <span class="visually-hidden">Open event</span>`;
 
   return (
     `<li class="trip-events__item">
@@ -83,7 +99,7 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, des
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${foundDestination.name}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
           <datalist id="destination-list-1">
           ${createDestinationOptionsTemplate()}
           </datalist>
@@ -102,14 +118,9 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, des
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice === 0 ? '' : basePrice}">
         </div>
-
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
-        <button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
-        </button>
+        ${createButtonContainerTemplate()}
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
@@ -132,7 +143,7 @@ export default class EditFormView extends AbstractStatefulView {
   #allDestinations = null;
   #allOffers = null;
 
-  constructor(wayPoint = DEFAULT_WAY_POINT, allDestinations = [], allOffers = []) {
+  constructor(wayPoint, allDestinations, allOffers) {
     super();
     this._state = EditFormView.parseWayPointToState(wayPoint);
     this.#allDestinations = allDestinations;
