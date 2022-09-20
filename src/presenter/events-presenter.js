@@ -130,7 +130,7 @@ export default class EventsPresenter {
     }
 
     if (resetSortType) {
-      this.#currentSortType = SortType.DEFAULT;
+      this.#currentSortType = SortType.DAY;
     }
   };
 
