@@ -113,7 +113,7 @@ export default class EventsPresenter {
         this.#renderPage();
         break;
       case UpdateType.MAJOR:
-        this.#clearPage();
+        this.#clearPage({ resetSortType: true });
         this.#renderPage();
         break;
     }
