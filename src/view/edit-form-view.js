@@ -62,7 +62,6 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, des
         </section>`
       : '';
   const destinationName = 'name' in foundDestination ? foundDestination.name : '';
-
   return (
     `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -196,7 +195,7 @@ export default class EditFormView extends AbstractStatefulView {
   #eventPriceHandler = (evt) => {
     evt.preventDefault();
     this._setState({
-      basePrice: evt.target.value,
+      basePrice: Number(evt.target.value.replace(/[^0-9.]/g, '')),
     });
   };
 
@@ -212,6 +211,7 @@ export default class EditFormView extends AbstractStatefulView {
     this.#setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setRollupClickHandler(this._callback.rollupClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
     this.#setDatepickerStart();
     this.#setDatepickerEnd();
   };

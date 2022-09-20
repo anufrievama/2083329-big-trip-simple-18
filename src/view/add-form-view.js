@@ -183,7 +183,7 @@ export default class AddFormView extends AbstractStatefulView {
   #eventPriceHandler = (evt) => {
     evt.preventDefault();
     this._setState({
-      basePrice: evt.target.value,
+      basePrice: Number(evt.target.value.replace(/[^0-9.]/g, '')),
     });
   };
 
