@@ -4,7 +4,7 @@ import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, destination }, allDestinations, allOffers) => {
+const createAddFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, destination }, allDestinations, allOffers) => {
 
   const eventDateStart = formatISOStringToDateTimeWithSlash(dateFrom);
   const eventDateEnd = formatISOStringToDateTimeWithSlash(dateTo);
@@ -62,6 +62,7 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, des
         </section>`
       : '';
   const destinationName = 'name' in foundDestination ? foundDestination.name : '';
+
   return (
     `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -107,10 +108,7 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, des
           <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" pattern ='^[0-9]+$' value="${basePrice === 0 ? '' : basePrice}">
         </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-            <button class="event__reset-btn" type="reset">Delete</button>
-            <button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
-        </button>
+          <button class="event__reset-btn" type="reset">Cancel</button>
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
@@ -126,7 +124,7 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, des
 </li>`);
 };
 
-export default class EditFormView extends AbstractStatefulView {
+export default class AddFormView extends AbstractStatefulView {
 
   #datepickerStart = null;
   #datepickerEnd = null;
@@ -135,7 +133,7 @@ export default class EditFormView extends AbstractStatefulView {
 
   constructor(wayPoint, allDestinations, allOffers) {
     super();
-    this._state = EditFormView.parseWayPointToState(wayPoint);
+    this._state = AddFormView.parseWayPointToState(wayPoint);
     this.#allDestinations = allDestinations;
     this.#allOffers = allOffers;
     this.#setInnerHandlers();
@@ -144,7 +142,7 @@ export default class EditFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEditFormTemplate(this._state, this.#allDestinations, this.#allOffers);
+    return createAddFormTemplate(this._state, this.#allDestinations, this.#allOffers);
   }
 
   static parseWayPointToState = (wayPoint) => ({
@@ -155,16 +153,6 @@ export default class EditFormView extends AbstractStatefulView {
     ...state
   });
 
-  setRollupClickHandler = (callback) => {
-    this._callback.rollupClick = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
-  };
-
-  #rollupClickHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.rollupClick();
-  };
-
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
@@ -172,7 +160,7 @@ export default class EditFormView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(EditFormView.parseStateToWayPoint(this._state));
+    this._callback.formSubmit(AddFormView.parseStateToWayPoint(this._state));
   };
 
   #eventTypeHandler = (evt) => {
@@ -210,8 +198,7 @@ export default class EditFormView extends AbstractStatefulView {
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setRollupClickHandler(this._callback.rollupClick);
-    this.setDeleteClickHandler(this._callback.deleteClick);
+    this.setCancelClickHandler(this._callback.cancelClick);
     this.#setDatepickerStart();
     this.#setDatepickerEnd();
   };
@@ -261,19 +248,19 @@ export default class EditFormView extends AbstractStatefulView {
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#eventOfferHandler);
   };
 
-  setDeleteClickHandler = (callback) => {
-    this._callback.deleteClick = callback;
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#eventDeleteClickHandler);
+  setCancelClickHandler = (callback) => {
+    this._callback.cancelClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#eventCancelClickHandler);
   };
 
-  #eventDeleteClickHandler = (evt) => {
+  #eventCancelClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick(EditFormView.parseStateToWayPoint(this._state));
+    this._callback.cancelClick(AddFormView.parseStateToWayPoint(this._state));
   };
 
   reset = (wayPoint) => {
     this.updateElement(
-      EditFormView.parseWayPointToState(wayPoint),
+      AddFormView.parseWayPointToState(wayPoint),
     );
   };
 

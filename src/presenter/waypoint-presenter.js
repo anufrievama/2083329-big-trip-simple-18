@@ -1,8 +1,8 @@
 import WayPointView from '../view/waypoint-view.js';
 import EditFormView from '../view/edit-form-view.js';
-import { isEscapeKey } from '../utils.js';
+import { isEscapeKey, getOffers, getDestinationById, isDatesEqual } from '../utils.js';
 import { render, replace, remove } from '../framework/render.js';
-import { Mode } from '../mock/const.js';
+import { Mode, UserAction, UpdateType } from '../mock/const.js';
 
 export default class WayPointPresenter {
 
@@ -28,8 +28,8 @@ export default class WayPointPresenter {
     const prevWayPointEditComponent = this.#wayPointEditComponent;
 
     this.#wayPointComponent = new WayPointView(wayPoint,
-      this.#wayPointsModel.getOffers(wayPoint),
-      this.#wayPointsModel.getDestination(wayPoint));
+      getOffers(wayPoint, this.#wayPointsModel.allOffers),
+      getDestinationById(wayPoint.destination, this.#wayPointsModel.allDestinations));
 
     this.#wayPointEditComponent = new EditFormView(wayPoint,
       this.#wayPointsModel.allDestinations,
@@ -38,6 +38,7 @@ export default class WayPointPresenter {
     this.#wayPointComponent.setRollupClickHandler(this.#handleExpandClick);
     this.#wayPointEditComponent.setRollupClickHandler(this.#handleRollupClick);
     this.#wayPointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
+    this.#wayPointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevWayPointComponent === null || prevWayPointEditComponent === null) {
       render(this.#wayPointComponent, this.#wayPointListComponent.element);
@@ -99,8 +100,21 @@ export default class WayPointPresenter {
     this.#replaceFormToPoint();
   };
 
-  #handleFormSubmit = (wayPoint) => {
-    this.#changeData(wayPoint);
+  #handleFormSubmit = (update) => {
+    const isMinorUpdate = !(isDatesEqual(this.#wayPoint.dateFrom, update.dateFrom) && isDatesEqual(this.#wayPoint.dateTo, update.dateTo));
+    this.#changeData(
+      UserAction.UPDATE_WAYPOINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
     this.#replaceFormToPoint();
+  };
+
+  #handleDeleteClick = (wayPoint) => {
+    this.#changeData(
+      UserAction.DELETE_WAYPOINT,
+      UpdateType.MINOR,
+      wayPoint,
+    );
   };
 }

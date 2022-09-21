@@ -14,7 +14,7 @@ const WAY_POINT_TYPES = [
 ];
 
 const DEFAULT_WAY_POINT = {
-  id: 0,
+  id: null,
   basePrice: 0,
   dateFrom: null,
   dateTo: null,
@@ -63,21 +63,30 @@ sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc 
 ac purus sit amet tempus.`.split('. ');
 
 const FilterType = {
-  EVERYTHING: 'everything',
-  FUTURE: 'future'
+  EVERYTHING: 'Everything',
+  FUTURE: 'Future'
 };
 
 const SortType = {
   DAY: 'day',
-  EVENT: '',
-  TIME: '',
   PRICE: 'price',
-  OFFERS: ''
 };
 
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING'
+};
+
+const UserAction = {
+  UPDATE_WAYPOINT: 'UPDATE_WAYPOINT',
+  ADD_WAYPOINT: 'ADD_WAYPOINT',
+  DELETE_WAYPOINT: 'DELETE_WAYPOINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
 };
 
 export {
@@ -92,5 +101,7 @@ export {
   CountPictures,
   FilterType,
   SortType,
-  Mode
+  Mode,
+  UserAction,
+  UpdateType
 };

@@ -1,7 +1,7 @@
 import AbstractView from '../framework/view/abstract-view';
 import { formatISOStringToMonthDay, formatISOStringToTime, formatISOStringToDate, formatISOStringToDateTime } from '../utils.js';
 
-const createWayPointTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, { name }) => {
+const createWayPointTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, destination) => {
 
   const eventDateStart = formatISOStringToMonthDay(dateFrom);
   const eventTimeStart = formatISOStringToTime(dateFrom);
@@ -9,6 +9,7 @@ const createWayPointTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, {
   const eventDay = formatISOStringToDate(dateFrom);
   const eventDateTimeStart = formatISOStringToDateTime(dateFrom);
   const eventDateTimeEnd = formatISOStringToDateTime(dateTo);
+  const destinationName = destination ? destination.name : '';
 
   const createOfferTemplate = () => {
     if (offers.length === 0) {
@@ -32,7 +33,7 @@ const createWayPointTemplate = ({ type, basePrice, dateFrom, dateTo }, offers, {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
     </div>
-    <h3 class="event__title">${type} ${name}</h3>
+    <h3 class="event__title">${type} ${destinationName}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime="${eventDateTimeStart}">${eventTimeStart}</time>
@@ -73,7 +74,7 @@ export default class WayPointView extends AbstractView {
 
   setRollupClickHandler = (callback) => {
     this._callback.rollupClick = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click',this.#rollupClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
   };
 
   #rollupClickHandler = (evt) => {

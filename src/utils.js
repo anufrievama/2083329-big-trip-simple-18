@@ -4,9 +4,11 @@ import { FilterType } from './mock/const.js';
 
 const isFutureDate = (dateStart, dateEnd) => dayjs().isBefore(dayjs(dateStart), UNIT_DATE) || dayjs().isBefore(dayjs(dateEnd), UNIT_DATE);
 
+const isDatesEqual = (date1, date2) => (date1 === null && date2 === null) || dayjs(date1).isSame(date2, UNIT_DATE);
+
 const filter = {
   [FilterType.EVERYTHING]: (wayPoints) => wayPoints,
-  [FilterType.FUTURE]: (wayPoints) => wayPoints.filter((wayPoint) => isFutureDate(wayPoint.dateTo, wayPoint.dateFrom)),
+  [FilterType.FUTURE]: (wayPoints) => wayPoints.filter((wayPoint) => isFutureDate(wayPoint.dateFrom, wayPoint.dateTo)),
 };
 
 const getRandomInteger = (min = 1, max = 1000) => {
@@ -36,18 +38,6 @@ const getLastWord = (string) => {
 
 const isEscapeKey = (key) => key === 'Escape';
 
-const updateWayPoint = (wayPoints, updatedWayPoint) => {
-  const index = wayPoints.findIndex((point) => point.id === updatedWayPoint.id);
-  if (index === -1) {
-    return;
-  }
-  return [
-    ...wayPoints.slice(0, index),
-    updatedWayPoint,
-    ...wayPoints.slice(index + 1),
-  ];
-};
-
 const sortWayPointDay = (point1, point2) => dayjs(point1.dateFrom).diff(dayjs(point2.dateFrom));
 
 const sortWayPointPrice = (point1, point2) => (point2.basePrice - point1.basePrice);
@@ -55,6 +45,8 @@ const sortWayPointPrice = (point1, point2) => (point2.basePrice - point1.basePri
 const getDestinationById = (idDestination, allDestinations) => allDestinations.find((destinationItem) => destinationItem.id === idDestination);
 
 const getOffersByType = (typeOffer, allOffers) => allOffers.find((offer) => offer.type === typeOffer).offers;
+
+const getOffers = (wayPoint, allOffers) => getOffersByType(wayPoint.type, allOffers).filter((offer) => wayPoint.offers.includes(offer.id));
 
 export {
   getRandomArrayElement,
@@ -68,9 +60,10 @@ export {
   getLastWord,
   isEscapeKey,
   filter,
-  updateWayPoint,
   sortWayPointDay,
   sortWayPointPrice,
   getDestinationById,
-  getOffersByType
+  getOffersByType,
+  getOffers,
+  isDatesEqual
 };
