@@ -69,10 +69,7 @@ const FilterType = {
 
 const SortType = {
   DAY: 'day',
-  EVENT: '',
-  TIME: '',
   PRICE: 'price',
-  OFFERS: ''
 };
 
 const Mode = {
