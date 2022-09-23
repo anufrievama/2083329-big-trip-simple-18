@@ -27,3 +27,4 @@ newEventButtonElement.addEventListener('click', handleNewEventButtonClick);
 
 eventsPresenter.init();
 filterPresenter.init();
+wayPointsModel.init();

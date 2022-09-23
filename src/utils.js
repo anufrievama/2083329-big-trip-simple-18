@@ -42,11 +42,11 @@ const sortWayPointDay = (point1, point2) => dayjs(point1.dateFrom).diff(dayjs(po
 
 const sortWayPointPrice = (point1, point2) => (point2.basePrice - point1.basePrice);
 
-const getDestinationById = (idDestination, allDestinations) => allDestinations.find((destinationItem) => destinationItem.id === idDestination);
+const getDestinationById = (idDestination, destinations) => destinations.find((destination) => destination.id === idDestination);
 
-const getOffersByType = (typeOffer, allOffers) => allOffers.find((offer) => offer.type === typeOffer).offers;
+const getOffersByType = (typeOffer, offers) => offers.find((offer) => offer.type === typeOffer).offers;
 
-const getOffers = (wayPoint, allOffers) => getOffersByType(wayPoint.type, allOffers).filter((offer) => wayPoint.offers.includes(offer.id));
+const getOffers = (wayPoint, offers) => getOffersByType(wayPoint.type, offers).filter((offer) => wayPoint.offers.includes(offer.id));
 
 export {
   getRandomArrayElement,

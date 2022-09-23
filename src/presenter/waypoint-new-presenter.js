@@ -26,8 +26,8 @@ export default class WayPointNewPresenter {
     }
 
     this.#wayPointAddComponent = new AddFormView(DEFAULT_WAY_POINT,
-      this.#wayPointsModel.allDestinations,
-      this.#wayPointsModel.allOffers);
+      this.#wayPointsModel.destinations,
+      this.#wayPointsModel.offers);
     this.#wayPointAddComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#wayPointAddComponent.setCancelClickHandler(this.#handleCancelClick);
 

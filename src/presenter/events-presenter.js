@@ -100,6 +100,11 @@ export default class EventsPresenter {
       case UserAction.DELETE_WAYPOINT:
         this.#wayPointsModel.deleteWayPoint(updateType, update);
         break;
+      case UpdateType.INIT:
+        // this.#isLoading = false;
+        // remove(this.#loadingComponent);
+        this.#renderPage();
+        break;
     }
   };
 

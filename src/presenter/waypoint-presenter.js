@@ -28,12 +28,12 @@ export default class WayPointPresenter {
     const prevWayPointEditComponent = this.#wayPointEditComponent;
 
     this.#wayPointComponent = new WayPointView(wayPoint,
-      getOffers(wayPoint, this.#wayPointsModel.allOffers),
-      getDestinationById(wayPoint.destination, this.#wayPointsModel.allDestinations));
+      getOffers(wayPoint, this.#wayPointsModel.offers),
+      getDestinationById(wayPoint.destination, this.#wayPointsModel.destinations));
 
     this.#wayPointEditComponent = new EditFormView(wayPoint,
-      this.#wayPointsModel.allDestinations,
-      this.#wayPointsModel.allOffers);
+      this.#wayPointsModel.destinations,
+      this.#wayPointsModel.offers);
 
     this.#wayPointComponent.setRollupClickHandler(this.#handleExpandClick);
     this.#wayPointEditComponent.setRollupClickHandler(this.#handleRollupClick);

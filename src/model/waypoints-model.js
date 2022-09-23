@@ -1,33 +1,42 @@
 import Observable from '../framework/observable.js';
-import { generateWayPoints } from '../mock/waypoints.js';
-import { generateOffers } from '../mock/offers.js';
-import { generateDestinations } from '../mock/destination.js';
+import { UpdateType } from '../mock/const.js';
 
 export default class WayPointsModel extends Observable {
-  #wayPoints = generateWayPoints();
-  #allOffers = generateOffers();
-  #allDestinations = generateDestinations();
+  #wayPoints = [];
+  #offers = [];
+  #destinations = [];
   #wayPointsApiService = null;
 
   constructor(wayPointsApiService) {
     super();
     this.#wayPointsApiService = wayPointsApiService;
-    this.#wayPointsApiService.points.then((points) => {
-      console.log(points.map(this.#adaptToClient));
-    });
   }
 
   get wayPoints() {
     return this.#wayPoints;
   }
 
-  get allDestinations() {
-    return this.#allDestinations;
+  get destinations() {
+    return this.#destinations;
   }
 
-  get allOffers() {
-    return this.#allOffers;
+  get offers() {
+    return this.#offers;
   }
+
+  init = async () => {
+    try {
+      const wayPoints = await this.#wayPointsApiService.wayPoints;
+      this.#wayPoints = wayPoints.map(this.#adaptToClient);
+      this.#offers = await this.#wayPointsApiService.offers;
+      this.#destinations = await this.#wayPointsApiService.destinations;
+    } catch(err) {
+      this.#wayPoints = [];
+      this.#offers = [];
+      this.#destinations = [];
+    }
+    this._notify(UpdateType.INIT);
+  };
 
   updateWayPoint = (updateType, update) => {
     const index = this.#wayPoints.findIndex((wayPoint) => wayPoint.id === update.id);
