@@ -1,7 +1,7 @@
 import AddFormView from '../view/add-form-view.js';
 import { isEscapeKey } from '../utils.js';
 import { render, remove, RenderPosition } from '../framework/render.js';
-import { UserAction, UpdateType, DEFAULT_WAY_POINT } from '../mock/const.js';
+import { UserAction, UpdateType, DEFAULT_WAY_POINT } from '../const.js';
 import { nanoid } from 'nanoid';
 
 export default class WayPointNewPresenter {

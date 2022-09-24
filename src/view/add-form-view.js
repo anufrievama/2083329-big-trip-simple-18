@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { WAY_POINT_TYPES } from '../mock/const.js';
+import { WAY_POINT_TYPES } from '../const.js';
 import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord, getDestinationById, getOffersByType } from '../utils.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';

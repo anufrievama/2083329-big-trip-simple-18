@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import { UNIT_DATE } from './mock/const.js';
-import { FilterType } from './mock/const.js';
+import { UNIT_DATE } from './const.js';
+import { FilterType } from './const.js';
 
 const isFutureDate = (dateStart, dateEnd) => dayjs().isBefore(dayjs(dateStart), UNIT_DATE) || dayjs().isBefore(dayjs(dateEnd), UNIT_DATE);
 

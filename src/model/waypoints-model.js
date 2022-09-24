@@ -1,5 +1,5 @@
 import Observable from '../framework/observable.js';
-import { UpdateType } from '../mock/const.js';
+import { UpdateType } from '../const.js';
 
 export default class WayPointsModel extends Observable {
   #wayPoints = [];

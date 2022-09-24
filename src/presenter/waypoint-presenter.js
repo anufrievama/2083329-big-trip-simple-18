@@ -2,7 +2,7 @@ import WayPointView from '../view/waypoint-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import { isEscapeKey, getOffers, getDestinationById, isDatesEqual } from '../utils.js';
 import { render, replace, remove } from '../framework/render.js';
-import { Mode, UserAction, UpdateType } from '../mock/const.js';
+import { Mode, UserAction, UpdateType } from '../const.js';
 
 export default class WayPointPresenter {
 

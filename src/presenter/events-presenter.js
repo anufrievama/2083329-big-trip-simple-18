@@ -6,7 +6,7 @@ import WayPointPresenter from './waypoint-presenter.js';
 import WayPointNewPresenter from './waypoint-new-presenter.js';
 import { sortWayPointDay, sortWayPointPrice, filter } from '../utils.js';
 import { render, remove, RenderPosition } from '../framework/render.js';
-import { SortType, UpdateType, UserAction, FilterType } from '../mock/const.js';
+import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 
 export default class EventsPresenter {
 
@@ -152,12 +152,14 @@ export default class EventsPresenter {
 
   #renderPage = () => {
 
-    render(this.#wayPointListComponent, this.#eventsContainer);
-
     if (this.#isLoading) {
       this.#renderLoading();
       return;
     }
+
+    this.#renderSort();
+    render(this.#wayPointListComponent, this.#eventsContainer);
+
     const wayPoints = this.wayPoints;
     const wayPountCount = this.wayPoints.length;
 
@@ -165,8 +167,6 @@ export default class EventsPresenter {
       this.#renderEmptyList();
       return;
     }
-
-    this.#renderSort();
     wayPoints.forEach((wayPoint) => this.#renderWayPoint(wayPoint));
 
   };

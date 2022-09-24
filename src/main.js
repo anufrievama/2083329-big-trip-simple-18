@@ -23,8 +23,12 @@ const handleNewEventButtonClick = () => {
   eventsPresenter.createWayPoint(handleNewEventFormClose);
   newEventButtonElement.disabled = true;
 };
+
 newEventButtonElement.addEventListener('click', handleNewEventButtonClick);
+newEventButtonElement.disabled = true;
 
 eventsPresenter.init();
 filterPresenter.init();
-wayPointsModel.init();
+wayPointsModel.init().finally(() => {
+  newEventButtonElement.disabled = false;
+});
