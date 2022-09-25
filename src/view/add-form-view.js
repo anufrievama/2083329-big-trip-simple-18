@@ -1,6 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { WAY_POINT_TYPES } from '../const.js';
 import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord, getDestinationById, getOffersByType } from '../utils.js';
+import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -22,7 +23,7 @@ const createAddFormTemplate = (wayPoint, destinations, offers) => {
   ).join(''));
 
   const createDestinationOptionsTemplate = () => (destinations.map((destinationItem) => (
-    `<option value="${destinationItem.name}"></option>`
+    `<option value="${he.encode(destinationItem.name)}"></option>`
   )).join(''));
 
   const createOfferTemplate = () => (offersByType.map(({ price, title, id }) => {
@@ -58,7 +59,7 @@ const createAddFormTemplate = (wayPoint, destinations, offers) => {
     'description' in foundDestination
       ? `<section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${foundDestination.description}</p>
+          <p class="event__destination-description">${he.encode(foundDestination.description)}</p>
           ${createPhotosContainerTemplate()}
         </section>`
       : '';
