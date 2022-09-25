@@ -1,15 +1,17 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { WAY_POINT_TYPES } from '../mock/const.js';
+import { WAY_POINT_TYPES } from '../const.js';
 import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord, getDestinationById, getOffersByType } from '../utils.js';
+import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, destination }, allDestinations, allOffers) => {
+const createEditFormTemplate = (wayPoint, destinations, offers) => {
 
+  const { type, basePrice, dateFrom, dateTo, destination } = wayPoint;
   const eventDateStart = formatISOStringToDateTimeWithSlash(dateFrom);
   const eventDateEnd = formatISOStringToDateTimeWithSlash(dateTo);
-  const foundDestination = destination !== null ? getDestinationById(destination, allDestinations) : {};
-  const offersByType = getOffersByType(type, allOffers);
+  const foundDestination = destination !== null ? getDestinationById(destination, destinations) : {};
+  const offersByType = getOffersByType(type, offers);
 
   const createEventTypeListTemplate = () => (WAY_POINT_TYPES.map((wayPointType) => {
     const checked = type === wayPointType ? 'checked' : '';
@@ -20,14 +22,14 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, des
   }
   ).join(''));
 
-  const createDestinationOptionsTemplate = () => (allDestinations.map((destinationItem) => (
-    `<option value="${destinationItem.name}"></option>`
+  const createDestinationOptionsTemplate = () => (destinations.map((destinationItem) => (
+    `<option value="${he.encode(destinationItem.name)}"></option>`
   )).join(''));
 
   const createOfferTemplate = () => (offersByType.map(({ price, title, id }) => {
     const nameOffer = getLastWord(title);
     const idOffer = `${nameOffer}-${id}`;
-    const checked = offers.includes(id) ? 'checked' : '';
+    const checked = wayPoint.offers.includes(id) ? 'checked' : '';
     const dataAttribute = `data-id-offer="${id}"`;
     return `<div class="event__offer-selector">
           <input class="event__offer-checkbox  visually-hidden" id="event-offer-${idOffer}" type="checkbox" name="event-offer-${nameOffer}" ${checked} ${dataAttribute}>
@@ -57,7 +59,7 @@ const createEditFormTemplate = ({ type, basePrice, dateFrom, dateTo, offers, des
     'description' in foundDestination
       ? `<section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${foundDestination.description}</p>
+          <p class="event__destination-description">${he.encode(foundDestination.description)}</p>
           ${createPhotosContainerTemplate()}
         </section>`
       : '';
@@ -130,21 +132,21 @@ export default class EditFormView extends AbstractStatefulView {
 
   #datepickerStart = null;
   #datepickerEnd = null;
-  #allDestinations = null;
-  #allOffers = null;
+  #destinations = null;
+  #offers = null;
 
-  constructor(wayPoint, allDestinations, allOffers) {
+  constructor(wayPoint, destinations, offers) {
     super();
     this._state = EditFormView.parseWayPointToState(wayPoint);
-    this.#allDestinations = allDestinations;
-    this.#allOffers = allOffers;
+    this.#destinations = destinations;
+    this.#offers = offers;
     this.#setInnerHandlers();
     this.#setDatepickerStart();
     this.#setDatepickerEnd();
   }
 
   get template() {
-    return createEditFormTemplate(this._state, this.#allDestinations, this.#allOffers);
+    return createEditFormTemplate(this._state, this.#destinations, this.#offers);
   }
 
   static parseWayPointToState = (wayPoint) => ({
@@ -187,7 +189,7 @@ export default class EditFormView extends AbstractStatefulView {
     evt.preventDefault();
     if (evt.target.value !== '') {
       this.updateElement({
-        destination: this.#allDestinations.find((destination) => evt.target.value === destination.name).id,
+        destination: this.#destinations.find((destination) => evt.target.value === destination.name).id,
       });
     }
   };
@@ -195,14 +197,15 @@ export default class EditFormView extends AbstractStatefulView {
   #eventPriceHandler = (evt) => {
     evt.preventDefault();
     this._setState({
-      basePrice: evt.target.value,
+      basePrice: Number(evt.target.value),
     });
   };
 
   #eventOfferHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
-      offers: Array.from(this.element.querySelector('.event__available-offers').querySelectorAll('input[type="checkbox"]:checked'))
+      offers: Array.from(this.element.querySelector('.event__available-offers')
+        .querySelectorAll('input[type="checkbox"]:checked'))
         .map((nodeItem) => Number(nodeItem.dataset.idOffer)),
     });
   };

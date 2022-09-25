@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import { UNIT_DATE } from './mock/const.js';
-import { FilterType } from './mock/const.js';
+import { UNIT_DATE } from './const.js';
+import { FilterType } from './const.js';
 
 const isFutureDate = (dateStart, dateEnd) => dayjs().isBefore(dayjs(dateStart), UNIT_DATE) || dayjs().isBefore(dayjs(dateEnd), UNIT_DATE);
 
@@ -42,11 +42,11 @@ const sortWayPointDay = (point1, point2) => dayjs(point1.dateFrom).diff(dayjs(po
 
 const sortWayPointPrice = (point1, point2) => (point2.basePrice - point1.basePrice);
 
-const getDestinationById = (idDestination, allDestinations) => allDestinations.find((destinationItem) => destinationItem.id === idDestination);
+const getDestinationById = (idDestination, destinations) => destinations.find((destination) => destination.id === idDestination);
 
-const getOffersByType = (typeOffer, allOffers) => allOffers.find((offer) => offer.type === typeOffer).offers;
+const getOffersByType = (typeOffer, offers) => offers.find((offer) => offer.type === typeOffer).offers;
 
-const getOffers = (wayPoint, allOffers) => getOffersByType(wayPoint.type, allOffers).filter((offer) => wayPoint.offers.includes(offer.id));
+const getOffers = (wayPoint, offers) => getOffersByType(wayPoint.type, offers).filter((offer) => wayPoint.offers.includes(offer.id));
 
 export {
   getRandomArrayElement,

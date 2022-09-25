@@ -2,7 +2,7 @@ import WayPointView from '../view/waypoint-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import { isEscapeKey, getOffers, getDestinationById, isDatesEqual } from '../utils.js';
 import { render, replace, remove } from '../framework/render.js';
-import { Mode, UserAction, UpdateType } from '../mock/const.js';
+import { Mode, UserAction, UpdateType } from '../const.js';
 
 export default class WayPointPresenter {
 
@@ -28,12 +28,12 @@ export default class WayPointPresenter {
     const prevWayPointEditComponent = this.#wayPointEditComponent;
 
     this.#wayPointComponent = new WayPointView(wayPoint,
-      getOffers(wayPoint, this.#wayPointsModel.allOffers),
-      getDestinationById(wayPoint.destination, this.#wayPointsModel.allDestinations));
+      getOffers(wayPoint, this.#wayPointsModel.offers),
+      getDestinationById(wayPoint.destination, this.#wayPointsModel.destinations));
 
     this.#wayPointEditComponent = new EditFormView(wayPoint,
-      this.#wayPointsModel.allDestinations,
-      this.#wayPointsModel.allOffers);
+      this.#wayPointsModel.destinations,
+      this.#wayPointsModel.offers);
 
     this.#wayPointComponent.setRollupClickHandler(this.#handleExpandClick);
     this.#wayPointEditComponent.setRollupClickHandler(this.#handleRollupClick);
