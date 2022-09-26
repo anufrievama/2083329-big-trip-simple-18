@@ -11,7 +11,6 @@ const WAY_POINT_TYPES = [
 ];
 
 const DEFAULT_WAY_POINT = {
-  id: null,
   basePrice: 0,
   dateFrom: null,
   dateTo: null,
