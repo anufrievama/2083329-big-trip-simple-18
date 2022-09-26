@@ -109,7 +109,7 @@ const createAddFormTemplate = (wayPoint, destinations, offers) => {
           </label>
           <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" pattern ='^[0-9]+$' value="${basePrice === 0 ? '' : basePrice}">
         </div>
-          <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'} ${isDisabled ? 'disabled' : ''}</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
           <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>Cancel</button>
       </header>
       <section class="event__details">

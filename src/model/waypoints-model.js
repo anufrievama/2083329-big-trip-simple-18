@@ -91,13 +91,11 @@ export default class WayPointsModel extends Observable {
       basePrice: wayPoint['base_price'],
       dateFrom: wayPoint['date_from'] !== null ? new Date(wayPoint['date_from']) : wayPoint['date_from'],
       dateTo: wayPoint['date_to'] !== null ? new Date(wayPoint['date_to']) : wayPoint['date_to'],
-      isFavorite: wayPoint['is_favorite'],
     };
 
     delete adaptedWayPoint['base_price'];
     delete adaptedWayPoint['date_from'];
     delete adaptedWayPoint['date_to'];
-    delete adaptedWayPoint['is_favorite'];
     return adaptedWayPoint;
   };
 }

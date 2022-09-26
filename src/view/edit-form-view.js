@@ -11,13 +11,13 @@ const createOfferTemplate = (offersByType, wayPoint) => (offersByType.map(({ pri
   const checked = wayPoint.offers.includes(id) ? 'checked' : '';
   const dataAttribute = `data-id-offer="${id}"`;
   return `<div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${idOffer}" type="checkbox" name="event-offer-${nameOffer}"${checked}${dataAttribute}>
-              <label class="event__offer-label" for="event-offer-${idOffer}">
-                <span class="event__offer-title">${title}</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">${price}</span>
-              </label>
-          </div>`;
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${idOffer}" type="checkbox" name="event-offer-${nameOffer}" ${checked} ${dataAttribute}>
+          <label class="event__offer-label" for="event-offer-${idOffer}">
+            <span class="event__offer-title">${title}</span>
+            &plus;&euro;&nbsp;
+            <span class="event__offer-price">${price}</span>
+          </label>
+      </div>`;
 }
 ).join(''));
 
@@ -110,8 +110,8 @@ const createEditFormTemplate = (wayPoint, destinations, offers,) => {
           </label>
           <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" pattern ='^[0-9]+$' value="${basePrice === 0 ? '' : basePrice}">
         </div>
-          <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'} ${isDisabled ? 'disabled' : ''}</button>
-          <button class="event__reset-btn" type="reset">${isDeleting ? 'Deleting...' : 'Delete'} ${isDisabled ? 'disabled' : ''} </button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+          <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
           <button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
             <span class="visually-hidden">Open event</span>
         </button>

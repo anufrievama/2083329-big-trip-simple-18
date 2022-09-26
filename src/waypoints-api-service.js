@@ -64,13 +64,11 @@ export default class WayPointsApiService extends ApiService {
       'base_price': wayPoint.basePrice,
       'date_from': wayPoint.dateFrom instanceof Date ? wayPoint.dateFrom.toISOString() : null,
       'date_to': wayPoint.dateTo instanceof Date ? wayPoint.dateTo.toISOString() : null,
-      'is_favorite': wayPoint.isFavorite,
     };
 
     delete adaptedWayPoint.basePrice;
     delete adaptedWayPoint.dateFrom;
     delete adaptedWayPoint.dateTo;
-    delete adaptedWayPoint.isFavorite;
 
     return adaptedWayPoint;
   };

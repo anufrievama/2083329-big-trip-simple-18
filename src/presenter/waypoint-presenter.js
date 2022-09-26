@@ -50,7 +50,8 @@ export default class WayPointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#wayPointEditComponent, prevWayPointEditComponent);
+      replace(this.#wayPointComponent, prevWayPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevWayPointComponent);
@@ -116,5 +117,23 @@ export default class WayPointPresenter {
       UpdateType.MINOR,
       wayPoint,
     );
+  };
+
+  setSaving = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#wayPointEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  };
+
+  setDeleting = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#wayPointEditComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
   };
 }

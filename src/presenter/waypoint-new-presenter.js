@@ -62,4 +62,11 @@ export default class WayPointNewPresenter {
   #handleCancelClick = () => {
     this.destroy();
   };
+
+  setSaving = () => {
+    this.#wayPointAddComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
 }
