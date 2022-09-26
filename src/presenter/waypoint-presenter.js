@@ -136,4 +136,21 @@ export default class WayPointPresenter {
       });
     }
   };
+
+  setAborting = () => {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#wayPointComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#wayPointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+    this.#wayPointEditComponent.shake(resetFormState);
+  };
+
 }

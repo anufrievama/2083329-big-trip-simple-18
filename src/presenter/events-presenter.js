@@ -97,19 +97,31 @@ export default class EventsPresenter {
     this.#renderPage();
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_WAYPOINT:
         this.#wayPointPresenter.get(update.id).setSaving();
         this.#wayPointsModel.updateWayPoint(updateType, update);
+        try {
+          await this.#wayPointsModel.updateWayPoint(updateType, update);
+        } catch(err) {
+          this.#wayPointPresenter.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_WAYPOINT:
-        this.#wayPointNewPresenter.setSaving();
-        this.#wayPointsModel.addWayPoint(updateType, update);
+        try {
+          await this.#wayPointsModel.addWayPoint(updateType, update);
+        } catch(err) {
+          this.#wayPointNewPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_WAYPOINT:
         this.#wayPointPresenter.get(update.id).setDeleting();
-        this.#wayPointsModel.deleteWayPoint(updateType, update);
+        try {
+          await this.#wayPointsModel.deleteWayPoint(updateType, update);
+        } catch(err) {
+          this.#wayPointNewPresenter.get(update.id).setAborting();
+        }
         break;
     }
   };
