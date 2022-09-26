@@ -49,6 +49,11 @@ const UpdateType = {
 
 const UNIT_DATE = 'minute';
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
 export {
   WAY_POINT_TYPES,
   DEFAULT_WAY_POINT,
@@ -57,5 +62,6 @@ export {
   SortType,
   Mode,
   UserAction,
-  UpdateType
+  UpdateType,
+  TimeLimit
 };
