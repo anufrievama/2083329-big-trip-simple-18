@@ -21,6 +21,14 @@ const createOfferTemplate = (offersByType, wayPoint) => (offersByType.map(({ pri
 }
 ).join(''));
 
+const createOffersContainerTemplate = (offersByType, wayPoint) =>
+  `<section class="event__section  event__section--offers">
+    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">
+        ${createOfferTemplate(offersByType, wayPoint)}
+      </div>
+  </section>`;
+
 const createEventTypeListTemplate = (type) => (WAY_POINT_TYPES.map((wayPointType) => {
   const checked = type === wayPointType ? 'checked' : '';
   return `<div class="event__type-item">
@@ -38,24 +46,19 @@ const createPhotosTemplate = (pictures) => (pictures.map((picture) => (
   `<img class="event__photo" src="${picture.src}" alt="Event photo">`
 )).join(''));
 
-
 const createPhotosContainerTemplate = (foundDestination) =>
-  'pictures' in foundDestination
-    ? `<div class="event__photos-container">
-  <div class="event__photos-tape">
-   ${createPhotosTemplate(foundDestination.pictures)}
-  </div>
-</div>`
-    : '';
+  `<div class="event__photos-container">
+    <div class="event__photos-tape">
+     ${createPhotosTemplate(foundDestination.pictures)}
+    </div>
+  </div>`;
 
 const createDestinationsContainerTemplate = (foundDestination) =>
-  'description' in foundDestination
-    ? `<section class="event__section  event__section--destination">
+  `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
       <p class="event__destination-description">${he.encode(foundDestination.description)}</p>
-      ${createPhotosContainerTemplate(foundDestination)}
-    </section>`
-    : '';
+      ${'pictures' in foundDestination ? createPhotosContainerTemplate(foundDestination) : ''}
+    </section>`;
 
 const createEditFormTemplate = (wayPoint, destinations, offers,) => {
 
@@ -117,14 +120,8 @@ const createEditFormTemplate = (wayPoint, destinations, offers,) => {
         </button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-          <div class="event__available-offers">
-            ${createOfferTemplate(offersByType, wayPoint)}
-          </div>
-        </section>
-        ${createDestinationsContainerTemplate(foundDestination)}
+        ${offersByType.length !== 0 ? createOffersContainerTemplate(offersByType, wayPoint) : ''}
+        ${'description' in foundDestination ? createDestinationsContainerTemplate(foundDestination) : ''}
       </section>
     </form>
 </li>`);
@@ -270,7 +267,10 @@ export default class EditFormView extends AbstractStatefulView {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#eventDestinationHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#eventPriceHandler);
-    this.element.querySelector('.event__available-offers').addEventListener('change', this.#eventOfferHandler);
+    const availableOffersElement = this.element.querySelector('.event__available-offers');
+    if (availableOffersElement !== null) {
+      availableOffersElement.addEventListener('change', this.#eventOfferHandler);
+    }
   };
 
   setDeleteClickHandler = (callback) => {

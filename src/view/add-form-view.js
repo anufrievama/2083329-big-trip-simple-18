@@ -12,14 +12,22 @@ const createOfferTemplate = (offersByType, wayPoint) => (offersByType.map(({ pri
   const dataAttribute = `data-id-offer="${id}"`;
   return `<div class="event__offer-selector">
    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${idOffer}" type="checkbox" name="event-offer-${nameOffer}" ${checked} ${dataAttribute}>
-    <label class="event__offer-label" for="event-offer-${idOffer}">
+     <label class="event__offer-label" for="event-offer-${idOffer}">
       <span class="event__offer-title">${title}</span>
-       &plus;&euro;&nbsp;
-       <span class="event__offer-price">${price}</span>
-     </label>
+        &plus;&euro;&nbsp;
+      <span class="event__offer-price">${price}</span>
+    </label>
   </div>`;
 }
 ).join(''));
+
+const createOffersContainerTemplate = (offersByType, wayPoint) =>
+  `<section class="event__section  event__section--offers">
+    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">
+        ${createOfferTemplate(offersByType, wayPoint)}
+      </div>
+  </section>`;
 
 const createEventTypeListTemplate = (type) => (WAY_POINT_TYPES.map((wayPointType) => {
   const checked = type === wayPointType ? 'checked' : '';
@@ -39,22 +47,18 @@ const createPhotosTemplate = (pictures) => (pictures.map((picture) => (
 )).join(''));
 
 const createPhotosContainerTemplate = (foundDestination) =>
-  'pictures' in foundDestination
-    ? `<div class="event__photos-container">
+  `<div class="event__photos-container">
     <div class="event__photos-tape">
      ${createPhotosTemplate(foundDestination.pictures)}
     </div>
-  </div>`
-    : '';
+  </div>`;
 
 const createDestinationsContainerTemplate = (foundDestination) =>
-  'description' in foundDestination
-    ? `<section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${he.encode(foundDestination.description)}</p>
-        ${createPhotosContainerTemplate(foundDestination)}
-      </section>`
-    : '';
+  `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${he.encode(foundDestination.description)}</p>
+      ${'pictures' in foundDestination ? createPhotosContainerTemplate(foundDestination) : ''}
+    </section>`;
 
 const createAddFormTemplate = (wayPoint, destinations, offers) => {
 
@@ -113,14 +117,8 @@ const createAddFormTemplate = (wayPoint, destinations, offers) => {
           <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>Cancel</button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-          <div class="event__available-offers">
-            ${createOfferTemplate(offersByType, wayPoint)}
-          </div>
-        </section>
-        ${createDestinationsContainerTemplate(foundDestination)}
+        ${offersByType.length !== 0 ? createOffersContainerTemplate(offersByType, wayPoint) : ''}
+        ${'description' in foundDestination ? createDestinationsContainerTemplate(foundDestination) : ''}
       </section>
     </form>
 </li>`);
@@ -253,7 +251,10 @@ export default class AddFormView extends AbstractStatefulView {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#eventDestinationHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#eventPriceHandler);
-    this.element.querySelector('.event__available-offers').addEventListener('change', this.#eventOfferHandler);
+    const availableOffersElement = this.element.querySelector('.event__available-offers');
+    if (availableOffersElement !== null) {
+      availableOffersElement.addEventListener('change', this.#eventOfferHandler);
+    }
   };
 
   setCancelClickHandler = (callback) => {
