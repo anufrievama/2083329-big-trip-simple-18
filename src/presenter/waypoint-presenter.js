@@ -108,7 +108,6 @@ export default class WayPointPresenter {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-    this.#replaceFormToPoint();
   };
 
   #handleDeleteClick = (wayPoint) => {

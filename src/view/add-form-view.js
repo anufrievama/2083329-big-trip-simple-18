@@ -1,62 +1,8 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { WAY_POINT_TYPES } from '../const.js';
 import { formatStringToDateTimeSlash, getDestinationById, getOffersByType, getIdByDestinationName } from '../utils.js';
-import he from 'he';
+import { createOffersContainerTemplate, createEventTypeListTemplate, createDestinationOptionsTemplate, createDestinationsContainerTemplate } from './templates/common-templates.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-
-const createOfferTemplate = (offersByType, wayPoint) => (offersByType.map(({ price, title, id }) => {
-  const checked = wayPoint.offers.includes(id) ? 'checked' : '';
-  const dataAttribute = `data-id-offer="${id}"`;
-  return `<div class="event__offer-selector">
-   <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="event-offer-${id}" ${checked} ${dataAttribute}>
-     <label class="event__offer-label" for="event-offer-${id}">
-      <span class="event__offer-title">${title}</span>
-        &plus;&euro;&nbsp;
-      <span class="event__offer-price">${price}</span>
-    </label>
-  </div>`;
-}
-).join(''));
-
-const createOffersContainerTemplate = (offersByType, wayPoint) =>
-  `<section class="event__section  event__section--offers">
-    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-      <div class="event__available-offers">
-        ${createOfferTemplate(offersByType, wayPoint)}
-      </div>
-  </section>`;
-
-const createEventTypeListTemplate = (type) => (WAY_POINT_TYPES.map((wayPointType) => {
-  const checked = type === wayPointType ? 'checked' : '';
-  return `<div class="event__type-item">
-    <input id="event-type-${wayPointType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${wayPointType}" ${checked}>
-    <label class="event__type-label  event__type-label--${wayPointType}" for="event-type-${wayPointType}-1">${wayPointType}</label>
-  </div>`;
-}
-).join(''));
-
-const createDestinationOptionsTemplate = (destinations, destinationName) => (destinations.map((destinationItem) => (
-  `<option value="${destinationItem.name}" ${destinationItem.name === destinationName ? 'selected' : ''}>${he.encode(destinationItem.name)}</option>`
-)).join(''));
-
-const createPhotosTemplate = (pictures) => (pictures.map((picture) => (
-  `<img class="event__photo" src="${picture.src}" alt="Event photo">`
-)).join(''));
-
-const createPhotosContainerTemplate = (foundDestination) =>
-  `<div class="event__photos-container">
-    <div class="event__photos-tape">
-     ${createPhotosTemplate(foundDestination.pictures)}
-    </div>
-  </div>`;
-
-const createDestinationsContainerTemplate = (foundDestination) =>
-  `<section class="event__section  event__section--destination">
-      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${he.encode(foundDestination.description)}</p>
-      ${'pictures' in foundDestination ? createPhotosContainerTemplate(foundDestination) : ''}
-    </section>`;
 
 const createAddFormTemplate = (wayPoint, destinations, offers) => {
 
@@ -90,9 +36,10 @@ const createAddFormTemplate = (wayPoint, destinations, offers) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <select class="event__input  event__input--destination" id="event-destination-1" name="event-destination">
-            ${createDestinationOptionsTemplate(destinations, destinationName)}
-          </select>
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
+            <datalist id="destination-list-1">
+              ${createDestinationOptionsTemplate(destinations)}
+            </datalist>
         </div>
 
         <div class="event__field-group  event__field-group--time">
@@ -108,7 +55,7 @@ const createAddFormTemplate = (wayPoint, destinations, offers) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" pattern ='^[0-9]+$' value="${basePrice === 0 ? '' : basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice === 0 ? '' : basePrice}">
         </div>
           <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
           <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>Cancel</button>
@@ -165,7 +112,7 @@ export default class AddFormView extends AbstractStatefulView {
     this._callback.formSubmit(AddFormView.parseStateToWayPoint(this._state));
   };
 
-  #eventTypeHandler = (evt) => {
+  #typeChangeHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
@@ -173,21 +120,23 @@ export default class AddFormView extends AbstractStatefulView {
     });
   };
 
-  #eventDestinationHandler = (evt) => {
+  #destinationChangeHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
-      destination: getIdByDestinationName(evt.target.value, this.#destinations),
+      destination: this.#destinations.map((destination) => destination.name).includes(evt.target.value)
+        ? getIdByDestinationName(evt.target.value, this.#destinations)
+        : null,
     });
   };
 
-  #eventPriceHandler = (evt) => {
+  #priceChangeHandler = (evt) => {
     evt.preventDefault();
     this._setState({
-      basePrice: Number(evt.target.value),
+      basePrice: Number(evt.target.value.replace(/[^0-9.]/g, '')),
     });
   };
 
-  #eventOfferHandler = (evt) => {
+  #offerChangeHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
       offers: Array.from(this.element.querySelector('.event__available-offers')
@@ -243,21 +192,20 @@ export default class AddFormView extends AbstractStatefulView {
   };
 
   #setInnerHandlers = () => {
-    this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#eventDestinationHandler);
-    this.element.querySelector('.event__input--price').addEventListener('change', this.#eventPriceHandler);
-    const availableOffersElement = this.element.querySelector('.event__available-offers');
-    if (availableOffersElement !== null) {
-      availableOffersElement.addEventListener('change', this.#eventOfferHandler);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#priceChangeHandler);
+    if (this.element.querySelector('.event__available-offers')) {
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
     }
   };
 
   setCancelClickHandler = (callback) => {
     this._callback.cancelClick = callback;
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#eventCancelClickHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#cancelClickHandler);
   };
 
-  #eventCancelClickHandler = (evt) => {
+  #cancelClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.cancelClick(AddFormView.parseStateToWayPoint(this._state));
   };
@@ -283,4 +231,3 @@ export default class AddFormView extends AbstractStatefulView {
   };
 }
 
-export { createOffersContainerTemplate, createEventTypeListTemplate, createDestinationOptionsTemplate, createDestinationsContainerTemplate };
