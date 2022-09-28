@@ -1,4 +1,4 @@
-const WAY_POINT_TYPES = [
+const WAYPOINT_TYPES = [
   'taxi',
   'bus',
   'train',
@@ -10,14 +10,13 @@ const WAY_POINT_TYPES = [
   'restaurant',
 ];
 
-const DEFAULT_WAY_POINT = {
-  id: null,
+const BLANK_WAYPOINT = {
   basePrice: 0,
-  dateFrom: null,
-  dateTo: null,
+  dateFrom: new Date,
+  dateTo: new Date,
   destination: null,
   offers: [],
-  type: WAY_POINT_TYPES[0],
+  type: WAYPOINT_TYPES[0],
 };
 
 const FilterType = {
@@ -50,13 +49,19 @@ const UpdateType = {
 
 const UNIT_DATE = 'minute';
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
 export {
-  WAY_POINT_TYPES,
-  DEFAULT_WAY_POINT,
+  WAYPOINT_TYPES,
+  BLANK_WAYPOINT,
   UNIT_DATE,
   FilterType,
   SortType,
   Mode,
   UserAction,
-  UpdateType
+  UpdateType,
+  TimeLimit
 };

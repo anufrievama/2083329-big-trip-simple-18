@@ -1,8 +1,7 @@
 import AddFormView from '../view/add-form-view.js';
 import { isEscapeKey } from '../utils.js';
 import { render, remove, RenderPosition } from '../framework/render.js';
-import { UserAction, UpdateType, DEFAULT_WAY_POINT } from '../const.js';
-import { nanoid } from 'nanoid';
+import { UserAction, UpdateType, BLANK_WAYPOINT } from '../const.js';
 
 export default class WayPointNewPresenter {
 
@@ -25,7 +24,7 @@ export default class WayPointNewPresenter {
       return;
     }
 
-    this.#wayPointAddComponent = new AddFormView(DEFAULT_WAY_POINT,
+    this.#wayPointAddComponent = new AddFormView(BLANK_WAYPOINT,
       this.#wayPointsModel.destinations,
       this.#wayPointsModel.offers);
     this.#wayPointAddComponent.setFormSubmitHandler(this.#handleFormSubmit);
@@ -56,11 +55,28 @@ export default class WayPointNewPresenter {
     this.#changeData(
       UserAction.ADD_WAYPOINT,
       UpdateType.MINOR,
-      { ...wayPoint, id: nanoid() },
+      wayPoint,
     );
   };
 
   #handleCancelClick = () => {
     this.destroy();
+  };
+
+  setSaving = () => {
+    this.#wayPointAddComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#wayPointAddComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+      });
+    };
+    this.#wayPointAddComponent.shake(resetFormState);
   };
 }

@@ -1,32 +1,32 @@
 import AbstractView from '../framework/view/abstract-view';
-import { formatISOStringToMonthDay, formatISOStringToTime, formatISOStringToDate, formatISOStringToDateTime } from '../utils.js';
+import { formatStringToMonthDay, formatStringToTime, formatStringToDate, formatStringToDateTime } from '../utils.js';
 import he from 'he';
+
+const createOfferTemplate = (offers) => {
+  if (offers.length === 0) {
+    return ` <li class="event__offer">
+              <span class="event__offer-title">No additional offers</span>
+            </li>`;
+  }
+  return offers.map(({ title, price }) => (
+    `<li class="event__offer">
+      <span class="event__offer-title">${title}</span>
+        &plus;&euro;&nbsp;
+      <span class="event__offer-price">${price}</span>
+    </li>`
+  )).join('');
+};
 
 const createWayPointTemplate = (wayPoint, offers, destination) => {
 
   const { type, basePrice, dateFrom, dateTo } = wayPoint;
-  const eventDateStart = formatISOStringToMonthDay(dateFrom);
-  const eventTimeStart = formatISOStringToTime(dateFrom);
-  const eventTimeEnd = formatISOStringToTime(dateTo);
-  const eventDay = formatISOStringToDate(dateFrom);
-  const eventDateTimeStart = formatISOStringToDateTime(dateFrom);
-  const eventDateTimeEnd = formatISOStringToDateTime(dateTo);
+  const eventDateStart = formatStringToMonthDay(dateFrom);
+  const eventTimeStart = formatStringToTime(dateFrom);
+  const eventTimeEnd = formatStringToTime(dateTo);
+  const eventDay = formatStringToDate(dateFrom);
+  const eventDateTimeStart = formatStringToDateTime(dateFrom);
+  const eventDateTimeEnd = formatStringToDateTime(dateTo);
   const destinationName = destination ? destination.name : '';
-
-  const createOfferTemplate = () => {
-    if (offers.length === 0) {
-      return ` <li class="event__offer">
-                <span class="event__offer-title">No additional offers</span>
-              </li>`;
-    }
-    return offers.map(({ title, price }) => (
-      `<li class="event__offer">
-        <span class="event__offer-title">${title}</span>
-          &plus;&euro;&nbsp;
-        <span class="event__offer-price">${price}</span>
-      </li>`
-    )).join('');
-  };
 
   return (
     `<li class="trip-events__item">
@@ -48,7 +48,7 @@ const createWayPointTemplate = (wayPoint, offers, destination) => {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${createOfferTemplate()}
+      ${createOfferTemplate(offers)}
     </ul>
     <button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>

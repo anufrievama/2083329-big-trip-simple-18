@@ -4,9 +4,10 @@ import SortView from '../view/sort-view.js';
 import LoadingView from '../view/loading-view.js';
 import WayPointPresenter from './waypoint-presenter.js';
 import WayPointNewPresenter from './waypoint-new-presenter.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import { sortWayPointDay, sortWayPointPrice, filter } from '../utils.js';
 import { render, remove, RenderPosition } from '../framework/render.js';
-import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
+import { SortType, UpdateType, UserAction, FilterType, TimeLimit } from '../const.js';
 
 export default class EventsPresenter {
 
@@ -22,6 +23,7 @@ export default class EventsPresenter {
   #wayPointNewPresenter = null;
   #currentSortType = SortType.DAY;
   #isLoading = true;
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   constructor(eventsContainer, wayPointsModel, filterModel) {
     this.#eventsContainer = eventsContainer;
@@ -97,18 +99,35 @@ export default class EventsPresenter {
     this.#renderPage();
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
     switch (actionType) {
       case UserAction.UPDATE_WAYPOINT:
+        this.#wayPointPresenter.get(update.id).setSaving();
         this.#wayPointsModel.updateWayPoint(updateType, update);
+        try {
+          await this.#wayPointsModel.updateWayPoint(updateType, update);
+        } catch(err) {
+          this.#wayPointPresenter.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_WAYPOINT:
-        this.#wayPointsModel.addWayPoint(updateType, update);
+        try {
+          await this.#wayPointsModel.addWayPoint(updateType, update);
+        } catch(err) {
+          this.#wayPointNewPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_WAYPOINT:
-        this.#wayPointsModel.deleteWayPoint(updateType, update);
+        this.#wayPointPresenter.get(update.id).setDeleting();
+        try {
+          await this.#wayPointsModel.deleteWayPoint(updateType, update);
+        } catch(err) {
+          this.#wayPointNewPresenter.get(update.id).setAborting();
+        }
         break;
     }
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {

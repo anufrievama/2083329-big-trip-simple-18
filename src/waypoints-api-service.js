@@ -3,6 +3,8 @@ import ApiService from './framework/api-service.js';
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
 export default class WayPointsApiService extends ApiService {
@@ -21,17 +23,37 @@ export default class WayPointsApiService extends ApiService {
       .then(ApiService.parseResponse);
   }
 
-  updateTask = async (point) => {
+  updateWayPoint = async (wayPoint) => {
     const response = await this._load({
-      url: `points/${point.id}`,
+      url: `points/${wayPoint.id}`,
       method: Method.PUT,
-      body: JSON.stringify(this.#adaptToServer(point)),
+      body: JSON.stringify(this.#adaptToServer(wayPoint)),
       headers: new Headers({ 'Content-Type': 'application/json' }),
+    });
+    const parsedResponse = await ApiService.parseResponse(response);
+    return parsedResponse;
+  };
+
+  addWayPoint = async (wayPoint) => {
+    const response = await this._load({
+      url: 'points',
+      method: Method.POST,
+      body: JSON.stringify(this.#adaptToServer(wayPoint)),
+      headers: new Headers({'Content-Type': 'application/json'}),
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;
+  };
+
+  deleteWayPoint = async (wayPoint) => {
+    const response = await this._load({
+      url: `points/${wayPoint.id}`,
+      method: Method.DELETE,
+    });
+
+    return response;
   };
 
   #adaptToServer = (wayPoint) => {
@@ -46,7 +68,6 @@ export default class WayPointsApiService extends ApiService {
     delete adaptedWayPoint.basePrice;
     delete adaptedWayPoint.dateFrom;
     delete adaptedWayPoint.dateTo;
-    delete adaptedWayPoint.isFavorite;
 
     return adaptedWayPoint;
   };
