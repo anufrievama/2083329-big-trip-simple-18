@@ -1,70 +1,14 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { WAY_POINT_TYPES } from '../const.js';
-import { toUpperCaseFirstLetter, formatISOStringToDateTimeWithSlash, getLastWord, getDestinationById, getOffersByType } from '../utils.js';
-import he from 'he';
+import { formatStringToDateTimeSlash, getDestinationById, getOffersByType, getIdByDestinationName } from '../utils.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-
-const createOfferTemplate = (offersByType, wayPoint) => (offersByType.map(({ price, title, id }) => {
-  const nameOffer = getLastWord(title);
-  const idOffer = `${nameOffer}-${id}`;
-  const checked = wayPoint.offers.includes(id) ? 'checked' : '';
-  const dataAttribute = `data-id-offer="${id}"`;
-  return `<div class="event__offer-selector">
-   <input class="event__offer-checkbox  visually-hidden" id="event-offer-${idOffer}" type="checkbox" name="event-offer-${nameOffer}" ${checked} ${dataAttribute}>
-     <label class="event__offer-label" for="event-offer-${idOffer}">
-      <span class="event__offer-title">${title}</span>
-        &plus;&euro;&nbsp;
-      <span class="event__offer-price">${price}</span>
-    </label>
-  </div>`;
-}
-).join(''));
-
-const createOffersContainerTemplate = (offersByType, wayPoint) =>
-  `<section class="event__section  event__section--offers">
-    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-      <div class="event__available-offers">
-        ${createOfferTemplate(offersByType, wayPoint)}
-      </div>
-  </section>`;
-
-const createEventTypeListTemplate = (type) => (WAY_POINT_TYPES.map((wayPointType) => {
-  const checked = type === wayPointType ? 'checked' : '';
-  return `<div class="event__type-item">
-    <input id="event-type-${wayPointType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${wayPointType}" ${checked}>
-    <label class="event__type-label  event__type-label--${wayPointType}" for="event-type-${wayPointType}-1">${toUpperCaseFirstLetter(wayPointType)}</label>
-  </div>`;
-}
-).join(''));
-
-const createDestinationOptionsTemplate = (destinations) => (destinations.map((destinationItem) => (
-  `<option value="${he.encode(destinationItem.name)}"></option>`
-)).join(''));
-
-const createPhotosTemplate = (pictures) => (pictures.map((picture) => (
-  `<img class="event__photo" src="${picture.src}" alt="Event photo">`
-)).join(''));
-
-const createPhotosContainerTemplate = (foundDestination) =>
-  `<div class="event__photos-container">
-    <div class="event__photos-tape">
-     ${createPhotosTemplate(foundDestination.pictures)}
-    </div>
-  </div>`;
-
-const createDestinationsContainerTemplate = (foundDestination) =>
-  `<section class="event__section  event__section--destination">
-      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${he.encode(foundDestination.description)}</p>
-      ${'pictures' in foundDestination ? createPhotosContainerTemplate(foundDestination) : ''}
-    </section>`;
+import { createOffersContainerTemplate, createEventTypeListTemplate, createDestinationOptionsTemplate, createDestinationsContainerTemplate} from './add-form-view.js';
 
 const createEditFormTemplate = (wayPoint, destinations, offers,) => {
 
   const { type, basePrice, dateFrom, dateTo, destination, isDisabled, isSaving, isDeleting } = wayPoint;
-  const eventDateStart = formatISOStringToDateTimeWithSlash(dateFrom);
-  const eventDateEnd = formatISOStringToDateTimeWithSlash(dateTo);
+  const eventDateStart = formatStringToDateTimeSlash(dateFrom);
+  const eventDateEnd = formatStringToDateTimeSlash(dateTo);
   const foundDestination = destination !== null ? getDestinationById(destination, destinations) : {};
   const offersByType = getOffersByType(type, offers);
   const destinationName = 'name' in foundDestination ? foundDestination.name : '';
@@ -92,10 +36,9 @@ const createEditFormTemplate = (wayPoint, destinations, offers,) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
-          <datalist id="destination-list-1">
-          ${createDestinationOptionsTemplate(destinations)}
-          </datalist>
+          <select class="event__input  event__input--destination" id="event-destination-1" name="event-destination">
+            ${createDestinationOptionsTemplate(destinations, destinationName)}
+          </select>
         </div>
 
         <div class="event__field-group  event__field-group--time">
@@ -193,11 +136,9 @@ export default class EditFormView extends AbstractStatefulView {
 
   #eventDestinationHandler = (evt) => {
     evt.preventDefault();
-    if (evt.target.value !== '') {
-      this.updateElement({
-        destination: this.#destinations.find((destination) => evt.target.value === destination.name).id,
-      });
-    }
+    this.updateElement({
+      destination: getIdByDestinationName(evt.target.value, this.#destinations),
+    });
   };
 
   #eventPriceHandler = (evt) => {

@@ -17,24 +17,17 @@ const getRandomInteger = (min = 1, max = 1000) => {
   return Math.floor(minNumber + Math.random() * (maxNumber - minNumber + 1));
 };
 
-const toUpperCaseFirstLetter = (string) => string[0].toUpperCase() + string.slice(1);
-
 const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
 
-const formatISOStringToMonthDay = (date) => date === null ? '' : dayjs(date).format('MMM D');
+const formatStringToMonthDay = (date) => date === null ? '' : dayjs(date).format('MMM D');
 
-const formatISOStringToTime = (date) => date === null ? '' : dayjs(date).format('HH:mm');
+const formatStringToTime = (date) => date === null ? '' : dayjs(date).format('HH:mm');
 
-const formatISOStringToDate = (date) => date === null ? '' : dayjs(date).format('YYYY-MM-DD');
+const formatStringToDate = (date) => date === null ? '' : dayjs(date).format('YYYY-MM-DD');
 
-const formatISOStringToDateTime = (date) => date === null ? '' : dayjs(date).format('YYYY-MM-DDTHH:mm');
+const formatStringToDateTime = (date) => date === null ? '' : dayjs(date).format('YYYY-MM-DDTHH:mm');
 
-const formatISOStringToDateTimeWithSlash = (date) => date === null ? '' : dayjs(date).format('DD/MM/YY HH:mm');
-
-const getLastWord = (string) => {
-  const wordArray = string.split(' ');
-  return wordArray[wordArray.length - 1];
-};
+const formatStringToDateTimeSlash = (date) => date === null ? '' : dayjs(date).format('DD/MM/YY HH:mm');
 
 const isEscapeKey = (key) => key === 'Escape';
 
@@ -44,6 +37,8 @@ const sortWayPointPrice = (point1, point2) => (point2.basePrice - point1.basePri
 
 const getDestinationById = (idDestination, destinations) => destinations.find((destination) => destination.id === idDestination);
 
+const getIdByDestinationName = (destinationName, destinations) => destinations.find((destination) => destinationName === destination.name).id;
+
 const getOffersByType = (typeOffer, offers) => offers.find((offer) => offer.type === typeOffer).offers;
 
 const getOffers = (wayPoint, offers) => getOffersByType(wayPoint.type, offers).filter((offer) => wayPoint.offers.includes(offer.id));
@@ -51,18 +46,17 @@ const getOffers = (wayPoint, offers) => getOffersByType(wayPoint.type, offers).f
 export {
   getRandomArrayElement,
   getRandomInteger,
-  toUpperCaseFirstLetter,
-  formatISOStringToMonthDay,
-  formatISOStringToTime,
-  formatISOStringToDate,
-  formatISOStringToDateTime,
-  formatISOStringToDateTimeWithSlash,
-  getLastWord,
+  formatStringToMonthDay,
+  formatStringToTime,
+  formatStringToDate,
+  formatStringToDateTime,
+  formatStringToDateTimeSlash,
   isEscapeKey,
   filter,
   sortWayPointDay,
   sortWayPointPrice,
   getDestinationById,
+  getIdByDestinationName,
   getOffersByType,
   getOffers,
   isDatesEqual
