@@ -102,7 +102,8 @@ export default class WayPointPresenter {
   };
 
   #handleFormSubmit = (update) => {
-    const isMinorUpdate = !(isDatesEqual(this.#wayPoint.dateFrom, update.dateFrom) && isDatesEqual(this.#wayPoint.dateTo, update.dateTo));
+    const isMinorUpdate = !isDatesEqual(this.#wayPoint.dateFrom, update.dateFrom) ||
+      this.#wayPoint.basePrice !== update.basePrice;
     this.#changeData(
       UserAction.UPDATE_WAYPOINT,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,

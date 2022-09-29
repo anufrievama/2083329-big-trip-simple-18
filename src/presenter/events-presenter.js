@@ -104,7 +104,6 @@ export default class EventsPresenter {
     switch (actionType) {
       case UserAction.UPDATE_WAYPOINT:
         this.#wayPointPresenter.get(update.id).setSaving();
-        this.#wayPointsModel.updateWayPoint(updateType, update);
         try {
           await this.#wayPointsModel.updateWayPoint(updateType, update);
         } catch(err) {

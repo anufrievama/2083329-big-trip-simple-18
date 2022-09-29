@@ -54,6 +54,10 @@ const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
+const AUTHORIZATION = 'Basic jdn56le3hYJkf89';
+
+const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
+
 export {
   WAYPOINT_TYPES,
   BLANK_WAYPOINT,
@@ -63,5 +67,7 @@ export {
   Mode,
   UserAction,
   UpdateType,
-  TimeLimit
+  TimeLimit,
+  AUTHORIZATION,
+  END_POINT
 };
