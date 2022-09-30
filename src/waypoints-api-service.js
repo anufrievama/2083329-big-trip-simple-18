@@ -1,11 +1,5 @@
+import { Method } from './const.js';
 import ApiService from './framework/api-service.js';
-
-const Method = {
-  GET: 'GET',
-  PUT: 'PUT',
-  POST: 'POST',
-  DELETE: 'DELETE',
-};
 
 export default class WayPointsApiService extends ApiService {
   get wayPoints() {

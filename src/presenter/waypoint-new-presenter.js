@@ -44,25 +44,6 @@ export default class WayPointNewPresenter {
     this.#wayPointAddComponent = null;
   };
 
-  #escKeyDownHandler = (evt) => {
-    if (isEscapeKey(evt.key)) {
-      evt.preventDefault();
-      this.destroy();
-    }
-  };
-
-  #handleFormSubmit = (wayPoint) => {
-    this.#changeData(
-      UserAction.ADD_WAYPOINT,
-      UpdateType.MINOR,
-      wayPoint,
-    );
-  };
-
-  #handleCancelClick = () => {
-    this.destroy();
-  };
-
   setSaving = () => {
     this.#wayPointAddComponent.updateElement({
       isDisabled: true,
@@ -78,5 +59,24 @@ export default class WayPointNewPresenter {
       });
     };
     this.#wayPointAddComponent.shake(resetFormState);
+  };
+
+  #handleFormSubmit = (wayPoint) => {
+    this.#changeData(
+      UserAction.ADD_WAYPOINT,
+      UpdateType.MINOR,
+      wayPoint,
+    );
+  };
+
+  #handleCancelClick = () => {
+    this.destroy();
+  };
+
+  #escKeyDownHandler = (evt) => {
+    if (isEscapeKey(evt.key)) {
+      evt.preventDefault();
+      this.destroy();
+    }
   };
 }

@@ -9,9 +9,9 @@ import { sortWayPointDay, sortWayPointPrice, filter } from '../utils.js';
 import { render, remove, RenderPosition } from '../framework/render.js';
 import { SortType, UpdateType, UserAction, FilterType, TimeLimit } from '../const.js';
 
-export default class EventsPresenter {
+export default class TripPresenter {
 
-  #eventsContainer = null;
+  #tripContainer = null;
   #wayPointsModel = null;
   #sortComponent = null;
   #filterModel = null;
@@ -25,8 +25,8 @@ export default class EventsPresenter {
   #isLoading = true;
   #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
-  constructor(eventsContainer, wayPointsModel, filterModel) {
-    this.#eventsContainer = eventsContainer;
+  constructor(tripContainer, wayPointsModel, filterModel) {
+    this.#tripContainer = tripContainer;
     this.#wayPointsModel = wayPointsModel;
     this.#filterModel = filterModel;
     this.#wayPointNewPresenter = new WayPointNewPresenter(this.#wayPointsModel,
@@ -72,17 +72,17 @@ export default class EventsPresenter {
   #renderSort = () => {
     this.#sortComponent = new SortView(this.#currentSortType);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
-    render(this.#sortComponent, this.#eventsContainer);
+    render(this.#sortComponent, this.#tripContainer);
   };
 
   #renderEmptyList = () => {
     this.#emptyListComponent = new EmptyListView(this.#filterType);
-    render(this.#emptyListComponent, this.#eventsContainer);
+    render(this.#emptyListComponent, this.#tripContainer);
     remove(this.#loadingComponent);
   };
 
   #renderLoading = () => {
-    render(this.#loadingComponent, this.#eventsContainer, RenderPosition.AFTERBEGIN);
+    render(this.#loadingComponent, this.#tripContainer, RenderPosition.AFTERBEGIN);
   };
 
   #handleModeChange = () => {
@@ -111,6 +111,7 @@ export default class EventsPresenter {
         }
         break;
       case UserAction.ADD_WAYPOINT:
+        this.#wayPointNewPresenter.setSaving();
         try {
           await this.#wayPointsModel.addWayPoint(updateType, update);
         } catch(err) {
@@ -150,7 +151,6 @@ export default class EventsPresenter {
     }
   };
 
-
   #clearPage = ({ resetSortType = false } = {}) => {
     this.#wayPointNewPresenter.destroy();
     this.#wayPointPresenter.forEach((presenter) => presenter.destroy());
@@ -176,12 +176,10 @@ export default class EventsPresenter {
     }
 
     this.#renderSort();
-    render(this.#wayPointListComponent, this.#eventsContainer);
-
+    render(this.#wayPointListComponent, this.#tripContainer);
     const wayPoints = this.wayPoints;
-    const wayPountCount = this.wayPoints.length;
 
-    if (wayPountCount === 0) {
+    if (this.wayPoints.length === 0) {
       this.#renderEmptyList();
       return;
     }

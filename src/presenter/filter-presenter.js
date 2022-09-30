@@ -20,7 +20,6 @@ export default class FilterPresenter {
 
   get filters() {
     const wayPoints = this.#wayPointsModel.wayPoints;
-
     return [
       {
         type: FilterType.EVERYTHING,

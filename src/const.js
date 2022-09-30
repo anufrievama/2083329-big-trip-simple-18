@@ -19,6 +19,11 @@ const BLANK_WAYPOINT = {
   type: WAYPOINT_TYPES[0],
 };
 
+const BLANK_DESTINATION = {
+  description: '',
+  name: '',
+};
+
 const FilterType = {
   EVERYTHING: 'Everything',
   FUTURE: 'Future'
@@ -58,9 +63,17 @@ const AUTHORIZATION = 'Basic jdn56le3hYJkf89';
 
 const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
 
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
+};
+
 export {
   WAYPOINT_TYPES,
   BLANK_WAYPOINT,
+  BLANK_DESTINATION,
   UNIT_DATE,
   FilterType,
   SortType,
@@ -69,5 +82,6 @@ export {
   UpdateType,
   TimeLimit,
   AUTHORIZATION,
-  END_POINT
+  END_POINT,
+  Method
 };
