@@ -1,34 +1,33 @@
-import EventsPresenter from './presenter/events-presenter.js';
+import TripPresenter from './presenter/trip-presenter';
 import FilterPresenter from './presenter/filter-presenter.js';
 import WayPointsModel from './model/waypoints-model.js';
 import FilterModel from './model/filter-model.js';
 import WayPointsApiService from './waypoints-api-service.js';
-
-const AUTHORIZATION = 'Basic jdn56le3hYJkf89';
-const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
+import { AUTHORIZATION, END_POINT } from './const.js';
 
 const controlsFiltersElement = document.querySelector('.trip-controls__filters');
-const eventsContainerElement = document.querySelector('.trip-events');
-const newEventButtonElement = document.querySelector('.trip-main__event-add-btn');
+const tripContainerElement = document.querySelector('.trip-events');
+const addEventButtonElement = document.querySelector('.trip-main__event-add-btn');
 
 const wayPointsModel = new WayPointsModel(new WayPointsApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
-const eventsPresenter = new EventsPresenter(eventsContainerElement, wayPointsModel, filterModel);
+const tripPresenter = new TripPresenter(tripContainerElement, wayPointsModel, filterModel);
 const filterPresenter = new FilterPresenter(controlsFiltersElement, filterModel, wayPointsModel);
 
 const handleNewEventFormClose = () => {
-  newEventButtonElement.disabled = false;
+  addEventButtonElement.disabled = false;
 };
+
 const handleNewEventButtonClick = () => {
-  eventsPresenter.createWayPoint(handleNewEventFormClose);
-  newEventButtonElement.disabled = true;
+  tripPresenter.createWayPoint(handleNewEventFormClose);
+  addEventButtonElement.disabled = true;
 };
 
-newEventButtonElement.addEventListener('click', handleNewEventButtonClick);
-newEventButtonElement.disabled = true;
+addEventButtonElement.addEventListener('click', handleNewEventButtonClick);
+addEventButtonElement.disabled = true;
 
-eventsPresenter.init();
+tripPresenter.init();
 filterPresenter.init();
 wayPointsModel.init().finally(() => {
-  newEventButtonElement.disabled = false;
+  addEventButtonElement.disabled = false;
 });

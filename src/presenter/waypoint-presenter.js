@@ -70,54 +70,6 @@ export default class WayPointPresenter {
     }
   };
 
-  #replacePointToForm = () => {
-    replace(this.#wayPointEditComponent, this.#wayPointComponent);
-    document.addEventListener('keydown', this.#escKeyDownHandler);
-    this.#changeMode();
-    this.#mode = Mode.EDITING;
-  };
-
-  #replaceFormToPoint = () => {
-    replace(this.#wayPointComponent, this.#wayPointEditComponent);
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
-    this.#mode = Mode.DEFAULT;
-  };
-
-  #escKeyDownHandler = (evt) => {
-    if (isEscapeKey(evt.key)) {
-      evt.preventDefault();
-      this.#wayPointEditComponent.reset(this.#wayPoint);
-      this.#replaceFormToPoint();
-      document.removeEventListener('keydown', this.#escKeyDownHandler);
-    }
-  };
-
-  #handleExpandClick = () => {
-    this.#replacePointToForm();
-  };
-
-  #handleRollupClick = () => {
-    this.#wayPointEditComponent.reset(this.#wayPoint);
-    this.#replaceFormToPoint();
-  };
-
-  #handleFormSubmit = (update) => {
-    const isMinorUpdate = !(isDatesEqual(this.#wayPoint.dateFrom, update.dateFrom) && isDatesEqual(this.#wayPoint.dateTo, update.dateTo));
-    this.#changeData(
-      UserAction.UPDATE_WAYPOINT,
-      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
-      update,
-    );
-  };
-
-  #handleDeleteClick = (wayPoint) => {
-    this.#changeData(
-      UserAction.DELETE_WAYPOINT,
-      UpdateType.MINOR,
-      wayPoint,
-    );
-  };
-
   setSaving = () => {
     if (this.#mode === Mode.EDITING) {
       this.#wayPointEditComponent.updateElement({
@@ -152,4 +104,53 @@ export default class WayPointPresenter {
     this.#wayPointEditComponent.shake(resetFormState);
   };
 
+  #replacePointToForm = () => {
+    replace(this.#wayPointEditComponent, this.#wayPointComponent);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#changeMode();
+    this.#mode = Mode.EDITING;
+  };
+
+  #replaceFormToPoint = () => {
+    replace(this.#wayPointComponent, this.#wayPointEditComponent);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
+  };
+
+  #handleExpandClick = () => {
+    this.#replacePointToForm();
+  };
+
+  #handleRollupClick = () => {
+    this.#wayPointEditComponent.reset(this.#wayPoint);
+    this.#replaceFormToPoint();
+  };
+
+  #handleFormSubmit = (update) => {
+    const isMinorUpdate = !isDatesEqual(this.#wayPoint.dateFrom, update.dateFrom) ||
+      !isDatesEqual(this.#wayPoint.dateTo, update.dateTo) ||
+      this.#wayPoint.basePrice !== update.basePrice;
+    this.#changeData(
+      UserAction.UPDATE_WAYPOINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
+  };
+
+  #handleDeleteClick = (wayPoint) => {
+    this.#changeData(
+      UserAction.DELETE_WAYPOINT,
+      UpdateType.MINOR,
+      wayPoint,
+    );
+  };
+
+  #escKeyDownHandler = (evt) => {
+    if (isEscapeKey(evt.key)) {
+      evt.preventDefault();
+      this.#wayPointEditComponent.reset(this.#wayPoint);
+      this.#replaceFormToPoint();
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
+    }
+  };
 }

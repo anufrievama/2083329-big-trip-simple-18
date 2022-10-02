@@ -20,27 +20,26 @@ const createOfferTemplate = (offers) => {
 const createWayPointTemplate = (wayPoint, offers, destination) => {
 
   const { type, basePrice, dateFrom, dateTo } = wayPoint;
-  const eventDateStart = formatStringToMonthDay(dateFrom);
-  const eventTimeStart = formatStringToTime(dateFrom);
-  const eventTimeEnd = formatStringToTime(dateTo);
-  const eventDay = formatStringToDate(dateFrom);
-  const eventDateTimeStart = formatStringToDateTime(dateFrom);
-  const eventDateTimeEnd = formatStringToDateTime(dateTo);
-  const destinationName = destination ? destination.name : '';
+  const startDateMonthDay = formatStringToMonthDay(dateFrom);
+  const startTime = formatStringToTime(dateFrom);
+  const endTime = formatStringToTime(dateTo);
+  const startDate = formatStringToDate(dateFrom);
+  const startDateTime = formatStringToDateTime(dateFrom);
+  const endDateTime = formatStringToDateTime(dateTo);
 
   return (
     `<li class="trip-events__item">
   <div class="event">
-    <time class="event__date" datetime=${eventDay}>${eventDateStart}</time>
+    <time class="event__date" datetime=${startDate}>${startDateMonthDay}</time>
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
     </div>
-    <h3 class="event__title">${type} ${he.encode(destinationName)}</h3>
+    <h3 class="event__title">${type} ${he.encode(destination.name)}</h3>
     <div class="event__schedule">
       <p class="event__time">
-        <time class="event__start-time" datetime="${eventDateTimeStart}">${eventTimeStart}</time>
+        <time class="event__start-time" datetime="${startDateTime}">${startTime}</time>
         &mdash;
-        <time class="event__end-time" datetime="${eventDateTimeEnd}">${eventTimeEnd}</time>
+        <time class="event__end-time" datetime="${endDateTime}">${endTime}</time>
       </p>
     </div>
     <p class="event__price">
