@@ -177,13 +177,12 @@ export default class TripPresenter {
 
     this.#renderSort();
     render(this.#wayPointListComponent, this.#tripContainer);
-    const wayPoints = this.wayPoints;
 
     if (this.wayPoints.length === 0) {
       this.#renderEmptyList();
       return;
     }
-    wayPoints.forEach((wayPoint) => this.#renderWayPoint(wayPoint));
+    this.wayPoints.forEach((wayPoint) => this.#renderWayPoint(wayPoint));
 
   };
 }
